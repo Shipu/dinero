@@ -2,9 +2,16 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Tenancy\EditAccountProfile;
+use App\Filament\Pages\Tenancy\RegisterAccount;
+use App\Livewire\MyProfile;
+use App\Models\Account;
+use Filament\FilamentManager;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Http\Middleware\IdentifyTenant;
+use Filament\Navigation\MenuItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -31,7 +38,6 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Sky,
             ])
-            ->maxContentWidth('full')
             ->sidebarWidth('17rem')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -53,18 +59,23 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+                IdentifyTenant::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
             ])
             ->sidebarCollapsibleOnDesktop()
+//            ->plugin(
+//                BreezyCore::make()
+//                    ->myProfile(hasAvatars: true)
+//                    ->myProfileComponents([MyProfile::class])
+//                    ->enableTwoFactorAuthentication()
+//
+//            )
+            ->tenant(model: Account::class, slugAttribute: 'id', ownershipRelationship: 'owner')
+            ->tenantRegistration(RegisterAccount::class)
+            ->tenantProfile(EditAccountProfile::class)
             ->databaseNotifications()
-            ->databaseNotificationsPolling('30s')
-            ->plugin(
-                BreezyCore::make()
-                    ->myProfile(hasAvatars: true)
-                    ->enableTwoFactorAuthentication()
-
-            );
+            ->databaseNotificationsPolling('30s');
     }
 }

@@ -16,3 +16,5 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/hub/{tenant}/my-profile', \App\Livewire\MyProfile::class)->name('filament.admin.pages.my-profile');
