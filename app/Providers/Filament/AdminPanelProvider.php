@@ -57,6 +57,9 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->sidebarCollapsibleOnDesktop()
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('30s')
             ->plugin(
                 BreezyCore::make()
                     ->myProfile(hasAvatars: true)
