@@ -43,12 +43,28 @@ class WalletResource extends Resource
                             ->default(WalletTypeEnum::GENERAL->value)
                             ->live(),
                         TextInput::make('balance')
-                            ->label(fn(Get $get): string => $get('type') === WalletTypeEnum::CREDIT_CARD->value ? __('wallets.fields.credit_limit') : __('wallets.fields.initial_balance'))
+                            ->label(__('wallets.fields.initial_balance'))
                             ->required()
                             ->numeric()
                             ->inputMode('decimal')
                             ->default(0)
-                            ->columnSpan(2),
+                            ->columnSpan(2)
+                            ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::GENERAL->value && $operation == 'create'),
+                        TextInput::make('meta.credit')
+                            ->label(__('wallets.fields.credit_limit'))
+                            ->required()
+                            ->numeric()
+                            ->inputMode('decimal')
+                            ->default(0)
+                            ->columnSpan(fn(string $operation): int => $operation == 'create' ? 1 : 2)
+                            ->visible(fn (Get $get): bool => $get('type') == WalletTypeEnum::CREDIT_CARD->value),
+                        TextInput::make('meta.total_due')
+                            ->label(__('wallets.fields.total_due'))
+                            ->required()
+                            ->numeric()
+                            ->inputMode('decimal')
+                            ->default(0)
+                            ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::CREDIT_CARD->value && $operation == 'create'),
                         Select::make('currency_code')
                             ->label(__('wallets.fields.currency_code'))
                             ->required()

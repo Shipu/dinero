@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Transformer\FilamentTransactionDtoTransformer;
 use Bavix\Wallet\Internal\Assembler\AvailabilityDtoAssembler;
 use Bavix\Wallet\Internal\Assembler\BalanceUpdatedEventAssembler;
 use Bavix\Wallet\Internal\Assembler\ExtraDtoAssembler;
@@ -131,7 +132,7 @@ return [
      * Objects of transformer from DTO to array.
      */
     'transformers' => [
-        'transaction' => TransactionDtoTransformer::class,
+        'transaction' => FilamentTransactionDtoTransformer::class,
         'transfer' => TransferDtoTransformer::class,
     ],
 
@@ -165,7 +166,7 @@ return [
      */
     'transaction' => [
         'table' => 'transactions',
-        'model' => Transaction::class,
+        'model' => \App\Models\Transaction::class,
     ],
 
     /**

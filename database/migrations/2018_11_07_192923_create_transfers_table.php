@@ -2,6 +2,8 @@
 
 declare(strict_types=1);
 
+use App\Enums\TransferStatusEnum;
+use App\Models\Account;
 use Bavix\Wallet\Models\Transaction;
 use Bavix\Wallet\Models\Transfer;
 use Illuminate\Database\Migrations\Migration;
@@ -13,32 +15,26 @@ return new class() extends Migration {
     {
         Schema::create($this->table(), function (Blueprint $table) {
             $table->bigIncrements('id');
+            $table->foreignIdFor(Account::class)->constrained((new Account())->getTable())->cascadeOnDelete();
             $table->morphs('from');
             $table->morphs('to');
-            $table
-                ->enum('status', ['exchange', 'transfer', 'paid', 'refund', 'gift'])
-                ->default('transfer')
-            ;
-
-            $table
-                ->enum('status_last', ['exchange', 'transfer', 'paid', 'refund', 'gift'])
-                ->nullable()
-            ;
+            $table->string('status')->comment(implode(',', TransferStatusEnum::toArray()))->default(TransferStatusEnum::TRANSFER->value);
+            $table->string('status_last')->comment(implode(',', TransferStatusEnum::toArray()))->nullable();
 
             $table->unsignedBigInteger('deposit_id');
             $table->unsignedBigInteger('withdraw_id');
 
             $table->decimal('discount', 64, 0)
-                ->default(0)
-            ;
+                ->default(0);
 
             $table->decimal('fee', 64, 0)
-                ->default(0)
-            ;
+                ->default(0);
 
             $table->uuid('uuid')
-                ->unique()
-            ;
+                ->unique();
+            $table->text('description')->nullable();
+            $table->timestamp('happened_at')->default(now());
+            $table->softDeletes();
             $table->timestamps();
 
             $table->foreign('deposit_id')

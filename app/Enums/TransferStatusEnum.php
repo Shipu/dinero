@@ -2,10 +2,13 @@
 
 namespace App\Enums;
 
-enum SpendTypeEnum: string
+enum TransferStatusEnum: string
 {
-    case INCOME = 'income';
-    case EXPENSE = 'expense';
+    case EXCHANGE = 'exchange';
+    case TRANSFER = 'transfer';
+    case REFUND = 'refund';
+    case GIFT = 'gift';
+    case PAID = 'paid';
 
     public static function toArray(): array
     {

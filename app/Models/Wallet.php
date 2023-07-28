@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\WalletTypeEnum;
 use Bavix\Wallet\Models\Wallet as BaseWallet;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -43,5 +44,17 @@ class Wallet extends BaseWallet
     {
         $this->holder_type = User::class;
         $this->holder_id = auth()->user()->id;
+    }
+
+    public function onModelCreated(): void
+    {
+        if($this->type == WalletTypeEnum::CREDIT_CARD->value) {
+            $totalDue = $this->meta['total_due'] ?? 0;
+            if($totalDue > 0) {
+                $this->withdraw($totalDue, ['description' => 'Initial credit card due']);
+            }
+        } else {
+            $this->deposit($this->balance, ['description' => 'Initial balance']);
+        }
     }
 }

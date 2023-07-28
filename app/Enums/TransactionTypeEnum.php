@@ -2,10 +2,10 @@
 
 namespace App\Enums;
 
-enum SpendTypeEnum: string
+enum TransactionTypeEnum: string
 {
-    case INCOME = 'income';
-    case EXPENSE = 'expense';
+    case DEPOSIT = 'deposit';
+    case WITHDRAW = 'withdraw';
 
     public static function toArray(): array
     {
