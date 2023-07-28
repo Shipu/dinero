@@ -109,6 +109,8 @@ class CategoryResource extends Resource
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
+            ->reorderable('order')
+            ->defaultSort('order')
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ]);
