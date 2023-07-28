@@ -64,6 +64,11 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
+            ->login()
+            ->registration()
+            ->passwordReset()
+            ->emailVerification()
+            ->profile()
             ->sidebarCollapsibleOnDesktop()
 //            ->plugin(
 //                BreezyCore::make()

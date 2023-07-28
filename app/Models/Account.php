@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Account extends Model implements HasCurrentTenantLabel
@@ -43,5 +44,15 @@ class Account extends Model implements HasCurrentTenantLabel
     public function members(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'account_member', 'account_id', 'user_id')->using(Member::class);
+    }
+
+    public function wallets(): HasMany
+    {
+        return $this->hasMany(Wallet::class);
+    }
+
+    public function categories(): HasMany
+    {
+        return $this->hasMany(Category::class);
     }
 }

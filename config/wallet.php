@@ -181,7 +181,7 @@ return [
      */
     'wallet' => [
         'table' => 'wallets',
-        'model' => Wallet::class,
+        'model' => \App\Models\Wallet::class,
         'creating' => [],
         'default' => [
             'name' => 'Default Wallet',

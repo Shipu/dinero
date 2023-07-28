@@ -16,22 +16,24 @@ return new class() extends Migration {
             $table->bigIncrements('id');
             $table->morphs('holder');
             $table->string('name');
-            $table->foreignIdFor(Account::class)->constrained((new Account())->getTable())->cascadeOnDelete();
             $table->string('slug')
-                ->index()
-            ;
+                ->index();
             $table->uuid('uuid')
-                ->unique()
-            ;
+                ->unique();
+            $table->foreignIdFor(Account::class)->constrained((new Account())->getTable())->cascadeOnDelete();
+            $table->string('type')->default(\App\Enums\WalletTypeEnum::GENERAL->value);
+            $table->string('currency_code')->default('USD');
+            $table->string('icon')->nullable();
+            $table->string('color')->nullable();
+            $table->boolean('exclude')->default(false);
+            $table->unsignedSmallInteger('statement_day_of_month')->nullable();
+            $table->unsignedSmallInteger('payment_due_day_of_month')->nullable();
             $table->string('description')
-                ->nullable()
-            ;
+                ->nullable();
             $table->json('meta')
-                ->nullable()
-            ;
+                ->nullable();
             $table->decimal('balance', 64, 0)
-                ->default(0)
-            ;
+                ->default(0);
             $table->unsignedSmallInteger('decimal_places')
                 ->default(2)
             ;

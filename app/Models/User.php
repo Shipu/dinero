@@ -3,7 +3,11 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Bavix\Wallet\Interfaces\Wallet as WalletContract;
+use Bavix\Wallet\Interfaces\WalletFloat;
 use Bavix\Wallet\Traits\HasWallet;
+use Bavix\Wallet\Traits\HasWalletFloat;
+use Bavix\Wallet\Traits\HasWallets;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
@@ -20,9 +24,9 @@ use Illuminate\Support\Collection;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements HasAvatar, HasTenants, HasDefaultTenant
+class User extends Authenticatable implements HasAvatar, HasTenants, HasDefaultTenant, WalletContract, WalletFloat
 {
-    use HasWallet, HasApiTokens, HasFactory, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
+    use HasWallet, HasWalletFloat, HasWallets, HasApiTokens, HasFactory, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
