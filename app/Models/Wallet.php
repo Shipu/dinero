@@ -44,6 +44,9 @@ class Wallet extends BaseWallet
     {
         $this->holder_type = User::class;
         $this->holder_id = auth()->user()->id;
+        $this->meta = [
+            'currency' => $this->currency_code,
+        ];
     }
 
     public function onModelCreated(): void

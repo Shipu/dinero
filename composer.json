@@ -11,6 +11,7 @@
         "php": "^8.1",
         "akaunting/laravel-money": "^5.1",
         "bavix/laravel-wallet": "^10.0",
+        "blade-ui-kit/blade-icons": "^1.5",
         "cviebrock/eloquent-sluggable": "^10.0",
         "filament/filament": "^3.0",
         "filament/notifications": "^3.0",
@@ -18,8 +19,10 @@
         "guzzlehttp/guzzle": "^7.2",
         "jeffgreco13/filament-breezy": "^v2.0.0-beta2",
         "laravel/framework": "^10.10",
+        "laravel/helpers": "^1.6",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+        "mallardduck/blade-lucide-icons": "^1.11",
         "rinvex/countries": "^9.0",
         "shipu/watchable": "dev-master"
     },

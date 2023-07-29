@@ -6,6 +6,7 @@ enum TransactionTypeEnum: string
 {
     case DEPOSIT = 'deposit';
     case WITHDRAW = 'withdraw';
+    case TRANSFER = 'transfer';
 
     public static function toArray(): array
     {

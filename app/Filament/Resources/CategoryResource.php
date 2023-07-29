@@ -7,6 +7,7 @@ use App\Enums\VisibilityStatusEnum;
 use App\Filament\Resources\CategoryResource\Pages;
 use App\Filament\Resources\CategoryResource\RelationManagers;
 use App\Models\Category;
+use App\Tables\Columns\IconColorColumn;
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Radio;
@@ -17,6 +18,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
+use Guava\FilamentIconPicker\Tables\IconColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -50,7 +52,10 @@ class CategoryResource extends Resource
                             ->default('#22b3e0'),
                         IconPicker::make('icon')
                             ->label(__('categories.fields.icon'))
+//                            ->sets(['lucide-icons'])
+                            ->sets(['heroicons', 'fontawesome-solid'])
                             ->columnSpan(2)
+                            ->preload()
                             ->columns([
                                 'default' => 1,
                                 'lg' => 3,
@@ -72,6 +77,8 @@ class CategoryResource extends Resource
     {
         return $table
             ->columns([
+                IconColorColumn::make('icon')
+                    ->label(__('categories.fields.icon')),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('categories.fields.name'))
                     ->searchable()
@@ -81,9 +88,14 @@ class CategoryResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => __("categories.types.{$state}.label"))
                     ->searchable(),
-                Tables\Columns\ColorColumn::make('color')
-                    ->label(__('categories.fields.color'))
-                    ->sortable(),
+//                Tables\Columns\IconColumn::make('icon')
+//                    ->label(__('categories.fields.icon'))
+//                    ->color(fn (string $state): string => match ($state) {
+//                        default => '#22b3e0',
+//                    })
+//                    ->icon(fn (string $state): string => match ($state) {
+//                        default => $state,
+//                    }),
                 Tables\Columns\TextColumn::make('status')
                     ->formatStateUsing(fn (string $state): string => __("categories.visibility_statuses.{$state}"))
                     ->searchable(),

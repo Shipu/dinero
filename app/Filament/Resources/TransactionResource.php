@@ -2,22 +2,28 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\SpendTypeEnum;
+use App\Enums\TransactionTypeEnum;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
 use App\Models\Transaction;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TransactionResource extends Resource
@@ -35,28 +41,143 @@ class TransactionResource extends Resource
                         Hidden::make('from_hub')
                             ->default(true)
                             ->visible(fn (string $operation): bool => $operation === 'create'),
+                        Radio::make('type')
+                            ->default(TransactionTypeEnum::WITHDRAW->value)
+                            ->formatStateUsing(function (string $state, ?Model $record): string {
+                                if(!blank($record)) {
+                                    if($record->isTransferTransaction) {
+                                        return TransactionTypeEnum::TRANSFER->value;
+                                    }
+                                }
+                                return $state;
+                            })
+                            ->disableOptionWhen(function(?Model $record){
+                                if(!blank($record)) {
+                                    if($record->isTransferTransaction) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            })
+                            ->label(__('transactions.fields.type'))
+                            ->inline()
+                            ->required()
+                            ->live()
+                            ->columnSpan(2)
+                            ->options(collect(__('transactions.types'))->pluck('label', 'id')),
                         DateTimePicker::make('happened_at')
+                            ->label(__('transactions.fields.happened_at'))
                             ->native(false)
                             ->seconds(false)
                             ->displayFormat('d/m/Y h:i a')
-                            ->default(now()),
+                            ->default(now())
+                            ->columnSpan(2),
+                        TextInput::make('amount')
+                            ->label(__('transactions.fields.amount'))
+                            ->required()
+                            ->disabled(function(?Model $record){
+                                if(!blank($record)) {
+                                    if($record->isTransferTransaction) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            })
+                            ->autofocus()
+                            ->columnSpan(2)
+                            ->numeric(),
+                        Textarea::make('description')
+                            ->label(__('transactions.fields.description'))
+                            ->columnSpan(2),
                         Select::make('wallet_id')
+                            ->label(__('transactions.fields.wallet'))
                             ->relationship('wallet', 'name')
                             ->searchable()
                             ->preload()
-                            ->required(),
-                        TextInput::make('amount')
                             ->required()
-                            ->numeric(),
+                            ->columnSpan(function (?Model $record): int {
+                                if(!blank($record)) {
+                                    if($record->isTransferTransaction) {
+                                        return 2;
+                                    }
+                                }
+                                return 1;
+                            })
+                            ->disabled(function (?Model $record): bool {
+                                if(!blank($record)) {
+                                    if($record->isTransferTransaction) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            })
+                            ->visible(function (Get $get, ?Model $record): bool {
+                                if(!blank($record)) {
+                                    if($record->isTransferTransaction) {
+                                        return true;
+                                    }
+                                }
+                                return $get('type') != TransactionTypeEnum::TRANSFER->value;
+                            }),
                         Select::make('category_id')
-                            ->relationship('category', 'name')
+                            ->label(__('transactions.fields.category'))
+                            ->relationship('category', 'name', function(Builder $query, Get $get){
+                                $spendType = match ($get('type')) {
+                                    TransactionTypeEnum::WITHDRAW->value => SpendTypeEnum::EXPENSE->value,
+                                    TransactionTypeEnum::DEPOSIT->value => SpendTypeEnum::INCOME->value,
+                                    default => null,
+                                };
+                                if(!is_null($spendType)) {
+                                    return $query->where('type', $spendType);
+                                }
+
+                                return $query;
+                            })
                             ->searchable()
                             ->preload()
-                            ->required(),
-                        Textarea::make('description')
-                            ->columnSpan(2),
-                        Forms\Components\Toggle::make('confirmed')
-                            ->default(true),
+                            ->required()
+                            ->visible(fn (Get $get): bool => $get('type') != TransactionTypeEnum::TRANSFER->value),
+                        Select::make('from_wallet_id')
+                            ->label( __('transactions.fields.from_wallet'))
+                            ->relationship('wallet', 'name')
+                            ->live()
+                            ->columnSpan(function(Get $get, ?Model $record): int {
+                                return blank($get('from_wallet_id')) ? 2 : 1;
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->afterStateUpdated(function (Set $set) {
+                                $set('to_wallet_id', null);
+                            })
+                            ->visible(function(Get $get, ?Model $record): bool {
+                                if(!blank($record)) {
+                                    if($record->isTransferTransaction) {
+                                        return false;
+                                    }
+                                }
+                                return $get('type') == TransactionTypeEnum::TRANSFER->value;
+                            }),
+                        Select::make('to_wallet_id')
+                            ->label(__('transactions.fields.to_wallet'))
+                            ->relationship('wallet', 'name', function(Builder $query, Get $get){
+                                return $query->where('id', '!=', $get('from_wallet_id'));
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->visible(function (Get $get, ?Model $record): bool {
+                                if(!blank($record)) {
+                                    if($record->isTransferTransaction) {
+                                        return false;
+                                    }
+                                }
+                                return $get('type') == TransactionTypeEnum::TRANSFER->value && !blank($get('from_wallet_id'));
+                            }),
+                        Toggle::make('confirmed')
+                            ->label(__('transactions.fields.confirmed'))
+                            ->default(true)
+                            ->visible(fn (Get $get): bool => $get('type') != TransactionTypeEnum::TRANSFER->value),
 
                     ])->columns([
                         'sm' => 2,

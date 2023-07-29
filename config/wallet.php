@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Transformer\FilamentTransactionDtoTransformer;
+use App\Transformer\FilamentTransferDtoTransformer;
 use Bavix\Wallet\Internal\Assembler\AvailabilityDtoAssembler;
 use Bavix\Wallet\Internal\Assembler\BalanceUpdatedEventAssembler;
 use Bavix\Wallet\Internal\Assembler\ExtraDtoAssembler;
@@ -133,7 +134,7 @@ return [
      */
     'transformers' => [
         'transaction' => FilamentTransactionDtoTransformer::class,
-        'transfer' => TransferDtoTransformer::class,
+        'transfer' => FilamentTransferDtoTransformer::class,
     ],
 
     /**

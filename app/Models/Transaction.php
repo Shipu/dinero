@@ -5,6 +5,8 @@ namespace App\Models;
 use App\Enums\SpendTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use Bavix\Wallet\Internal\Service\UuidFactoryServiceInterface;
+use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -41,7 +43,19 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
         return $this->belongsTo(Category::class);
     }
 
-    public function onModelSaving(): void
+    public function wallet(): BelongsTo
+    {
+        $filamentTenantId = optional(Filament::getTenant())->id;
+        $relationShip = $this->belongsTo(Wallet::class);
+
+        if(!blank($filamentTenantId)) {
+            return $relationShip->where('account_id', $filamentTenantId);
+        }
+
+        return $relationShip;
+    }
+
+    public function onModelCreating(): void
     {
         if($this->from_hub) {
             unset($this->from_hub);
@@ -50,10 +64,24 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
             $this->uuid = app(UuidFactoryServiceInterface::class)->uuid4();
         }
 
-        $this->type = match ($this->category->type) {
+        $this->type = match (optional($this->category)->type) {
             SpendTypeEnum::EXPENSE->value => TransactionTypeEnum::WITHDRAW->value,
             SpendTypeEnum::INCOME->value => TransactionTypeEnum::DEPOSIT->value,
         };
+    }
+
+    public function onModelSaving(): void
+    {
+        $this->meta = array_merge($this->getOriginal('meta'), $this->meta);
+    }
+
+    public function isTransferTransaction(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return array_get($this->meta, 'transfer', false) ?? false;
+            }
+        );
     }
 
     public function onModelSaved(): void

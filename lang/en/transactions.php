@@ -1,33 +1,41 @@
 <?php
 
 use App\Enums\SpendTypeEnum;
+use App\Enums\TransactionTypeEnum;
 use App\Enums\VisibilityStatusEnum;
 
 return [
     'title' => 'Transactions',
     'title_singular' => 'Transaction',
     'fields' => [
-        'name' => 'Name',
+        'amount' => 'Amount',
+        'confirmed' => 'Confirmed',
+        'category' => 'Category',
+        'account' => 'Account',
+        'happened_at' => 'Happened At',
+        'description' => 'Description',
         'type' => 'Type',
-        'icon' => 'Icon',
-        'color' => 'Color',
-        'is_visible' => 'Is Visible?',
-        'is_visible_help_text' => 'Ignore this category on the total balance and not showing on the transaction list',
+        'wallet' => 'Wallet',
+        'from_wallet' => 'From Wallet',
+        'to_wallet' => 'To Wallet',
+        'note' => 'Note',
+        'attachment' => 'Attachment',
     ],
     'types' => [
-        SpendTypeEnum::INCOME->value   => [
-            'id' => SpendTypeEnum::INCOME->value,
-            'label' => 'Income',
-            'description' => 'your income category',
+        TransactionTypeEnum::DEPOSIT->value   => [
+            'id' => TransactionTypeEnum::DEPOSIT->value,
+            'label' => 'Deposit',
+            'description' => 'Deposit to your wallet',
         ],
-        SpendTypeEnum::EXPENSE->value   => [
-            'id' => SpendTypeEnum::EXPENSE->value,
-            'label' => 'Expense',
-            'description' => 'your expense category',
+        TransactionTypeEnum::WITHDRAW->value  => [
+            'id' => TransactionTypeEnum::WITHDRAW->value,
+            'label' => 'Withdraw',
+            'description' => 'Withdraw from your wallet',
         ],
-    ],
-    'visibility_statuses' => [
-        VisibilityStatusEnum::ACTIVE->value   => 'Active',
-        VisibilityStatusEnum::INACTIVE->value => 'Inactive',
-    ],
+        TransactionTypeEnum::TRANSFER->value  => [
+            'id' => TransactionTypeEnum::TRANSFER->value,
+            'label' => 'Transfer',
+            'description' => 'Transfer between your wallets',
+        ],
+    ]
 ];
