@@ -26,7 +26,7 @@ class WalletResource extends Resource
 {
     protected static ?string $model = Wallet::class;
 
-    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
+    protected static ?string $navigationIcon = 'lucide-wallet';
 
     public static function form(Form $form): Form
     {

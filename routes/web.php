@@ -15,14 +15,6 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    $user = \App\Models\User::first();
-
-    $wallet = $user->getWallet('cash');
-//    $wallet->deposit(100);
-
-    dump($wallet->refreshBalance()); // 0
-    dd($wallet->balance); // 0
-    dd($user->hasWallet('my-wallet')); // true
     return view('welcome');
 });
 

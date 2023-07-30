@@ -30,7 +30,7 @@ class TransactionResource extends Resource
 {
     protected static ?string $model = Transaction::class;
 
-    protected static ?string $navigationIcon = 'heroicon-m-rectangle-stack';
+    protected static ?string $navigationIcon = 'lucide-calculator';
 
     public static function form(Form $form): Form
     {
