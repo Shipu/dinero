@@ -202,21 +202,40 @@ class TransactionResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('payable.name')
-                    ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('happened_at')
+                    ->label(__('transactions.fields.happened_at'))
+                    ->dateTime()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('wallet.name')
+                    ->label(__('transactions.fields.wallet'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
+                    ->badge()
+                    ->icon(fn (string $state): string => match ($state) {
+                        TransactionTypeEnum::WITHDRAW->value => 'lucide-trending-down',
+                        TransactionTypeEnum::DEPOSIT->value => 'lucide-trending-up',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        TransactionTypeEnum::WITHDRAW->value => 'primary',
+                        TransactionTypeEnum::DEPOSIT->value => 'warning',
+                    })
+                    ->formatStateUsing(fn (string $state): string => __("transactions.types.{$state}.label"))
+                    ->label(__('transactions.fields.type'))
                     ->searchable(),
                 Tables\Columns\TextColumn::make('amount')
+                    ->label(__('transactions.fields.amount'))
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('confirmed')
-                    ->boolean(),
+                    ->label(__('transactions.fields.confirmed'))
+                    ->boolean()
+                    ->trueIcon('lucide-check-circle')
+                    ->falseIcon('lucide-x-circle'),
             ])
             ->filters([
+                Tables\Filters\SelectFilter::make('type')
+                    ->options(collect(__('transactions.types'))->except([TransactionTypeEnum::TRANSFER->value])->pluck('label', 'id')->toArray()),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
@@ -229,6 +248,7 @@ class TransactionResource extends Resource
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ])
+            ->defaultSort('happened_at', 'desc')
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ]);

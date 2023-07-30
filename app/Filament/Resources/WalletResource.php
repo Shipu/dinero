@@ -14,6 +14,9 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\Layout\Panel;
+use Filament\Tables\Columns\Layout\Stack;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Database\Eloquent\Builder;
@@ -106,6 +109,8 @@ class WalletResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\ColorColumn::make('color')
+                    ->label(__('wallets.fields.color')),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('wallets.fields.name'))
                     ->searchable()
@@ -114,9 +119,6 @@ class WalletResource extends Resource
                     ->label(__('wallets.fields.type'))
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => __("wallets.types.{$state}"))
-                    ->sortable(),
-                Tables\Columns\ColorColumn::make('color')
-                    ->label(__('wallets.fields.color'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('balance')
                     ->label(__('wallets.fields.balance'))
@@ -127,8 +129,13 @@ class WalletResource extends Resource
                     ->sortable(),
 
             ])
+            ->striped()
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('type')
+                    ->label(__('wallets.fields.type'))
+                    ->options(__('wallets.types'))
+                    ->multiple()
+                    ->searchable(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
