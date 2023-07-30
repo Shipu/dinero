@@ -16,6 +16,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Guava\FilamentIconPicker\Tables\IconColumn;
@@ -86,19 +87,25 @@ class CategoryResource extends Resource
                 Tables\Columns\TextColumn::make('type')
                     ->label(__('categories.fields.type'))
                     ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        SpendTypeEnum::EXPENSE->value => 'warning',
+                        SpendTypeEnum::INCOME->value => 'primary',
+                    })
                     ->formatStateUsing(fn (string $state): string => __("categories.types.{$state}.label"))
                     ->searchable(),
-//                Tables\Columns\IconColumn::make('icon')
-//                    ->label(__('categories.fields.icon'))
-//                    ->color(fn (string $state): string => match ($state) {
-//                        default => '#22b3e0',
-//                    })
-//                    ->icon(fn (string $state): string => match ($state) {
-//                        default => $state,
-//                    }),
-                Tables\Columns\TextColumn::make('status')
-                    ->formatStateUsing(fn (string $state): string => __("categories.visibility_statuses.{$state}"))
-                    ->searchable(),
+                Tables\Columns\IconColumn::make('status')
+                    ->label(__('categories.fields.is_visible'))
+                    ->icon(fn (string $state): string => match ($state) {
+                        VisibilityStatusEnum::ACTIVE->value => 'lucide-check-circle',
+                        VisibilityStatusEnum::INACTIVE->value => 'lucide-x-circle',
+                        default => 'lucide-x-circle',
+                    })
+                    ->color(fn (string $state): string => match ($state) {
+                        VisibilityStatusEnum::ACTIVE->value => 'success',
+                        VisibilityStatusEnum::INACTIVE->value => 'danger',
+                        default => 'gray',
+                    }),
+//                    ->formatStateUsing(fn (string $state): string => __("categories.visibility_statuses.{$state}")),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -109,7 +116,11 @@ class CategoryResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-//                Tables\Filters\TrashedFilter::make(),
+                Filter::make('status')
+                    ->label(__('categories.fields.is_visible'))
+                    ->query(fn (Builder $query): Builder => $query->where('status', VisibilityStatusEnum::ACTIVE->value))
+                    ->toggle(),
+                Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
@@ -123,6 +134,8 @@ class CategoryResource extends Resource
             ])
             ->reorderable('order')
             ->defaultSort('order')
+            ->deferLoading()
+            ->striped()
             ->emptyStateActions([
                 Tables\Actions\CreateAction::make(),
             ]);
