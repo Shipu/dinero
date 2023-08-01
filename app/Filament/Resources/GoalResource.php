@@ -24,7 +24,7 @@ class GoalResource extends Resource
 {
     protected static ?string $model = Goal::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'goal';
 
     public static function form(Form $form): Form
     {
