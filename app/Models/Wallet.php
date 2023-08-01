@@ -4,6 +4,8 @@ namespace App\Models;
 
 use App\Enums\WalletTypeEnum;
 use Bavix\Wallet\Models\Wallet as BaseWallet;
+use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Shipu\Watchable\Traits\WatchableTrait;
@@ -35,6 +37,11 @@ class Wallet extends BaseWallet
         'updated_at',
     ];
 
+    public function scopeTenant(Builder $query): Builder
+    {
+        return $query->where('account_id', optional(Filament::getTenant())->id);
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id');
@@ -51,13 +58,15 @@ class Wallet extends BaseWallet
 
     public function onModelCreated(): void
     {
+        $amount = $this->meta['initial_balance'] ?? 0;
+        dd($amount, $this->meta);
         if($this->type == WalletTypeEnum::CREDIT_CARD->value) {
-            $totalDue = $this->meta['total_due'] ?? 0;
-            if($totalDue > 0) {
-                $this->withdraw($totalDue, ['description' => 'Initial credit card due']);
+            $amount = $this->meta['total_due'] ?? 0;
+            if($amount > 0) {
+                $this->withdraw($amount, ['description' => 'Initial credit card due']);
             }
-        } else {
-            $this->deposit($this->balance, ['description' => 'Initial balance']);
+        } elseif($amount > 0) {
+            $this->deposit($amount, ['description' => 'Initial balance']);
         }
     }
 }

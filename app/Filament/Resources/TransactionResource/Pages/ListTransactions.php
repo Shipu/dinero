@@ -26,17 +26,14 @@ class ListTransactions extends ListRecords
         return [
             'all' => Tab::make()
                 ->icon('lucide-calculator')
-                ->iconColor('black')
-                ->badge(Transaction::query()->count()),
+                ->badge(Transaction::tenant()->count()),
             TransactionTypeEnum::WITHDRAW->value => Tab::make()
                 ->icon('lucide-trending-down')
-                ->iconColor('black')
-                ->badge(Transaction::query()->where('type', TransactionTypeEnum::WITHDRAW->value)->count())
+                ->badge(Transaction::tenant()->where('type', TransactionTypeEnum::WITHDRAW->value)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('type', TransactionTypeEnum::WITHDRAW->value)),
             TransactionTypeEnum::DEPOSIT->value => Tab::make()
                 ->icon('lucide-trending-up')
-                ->iconColor('black')
-                ->badge(Transaction::query()->where('type', TransactionTypeEnum::DEPOSIT->value)->count())
+                ->badge(Transaction::tenant()->where('type', TransactionTypeEnum::DEPOSIT->value)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('type', TransactionTypeEnum::DEPOSIT->value)),
         ];
     }

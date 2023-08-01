@@ -26,17 +26,14 @@ class ListCategories extends ListRecords
         return [
             'all' => Tab::make()
                 ->icon('lucide-layout-list')
-                ->iconColor('black')
-                ->badge(Category::query()->count()),
+                ->badge(Category::tenant()->count()),
             SpendTypeEnum::EXPENSE->value => Tab::make()
                 ->icon('lucide-trending-down')
-                ->iconColor('black')
-                ->badge(Category::query()->where('type', SpendTypeEnum::EXPENSE->value)->count())
+                ->badge(Category::tenant()->where('type', SpendTypeEnum::EXPENSE->value)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('type', SpendTypeEnum::EXPENSE->value)),
             SpendTypeEnum::INCOME->value => Tab::make()
                 ->icon('lucide-trending-up')
-                ->iconColor('black')
-                ->badge(Category::query()->where('type', SpendTypeEnum::INCOME->value)->count())
+                ->badge(Category::tenant()->where('type', SpendTypeEnum::INCOME->value)->count())
                 ->modifyQueryUsing(fn (Builder $query) => $query->where('type', SpendTypeEnum::INCOME->value)),
         ];
     }

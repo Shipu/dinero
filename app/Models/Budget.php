@@ -2,37 +2,31 @@
 
 namespace App\Models;
 
-use Cviebrock\EloquentSluggable\Sluggable;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Shipu\Watchable\Traits\WatchableTrait;
 
-class Category extends Model
+class Budget extends Model
 {
-    use HasFactory, SoftDeletes, WatchableTrait, Sluggable;
+    use HasFactory, SoftDeletes, WatchableTrait;
 
     protected $fillable = [
         'name',
-        'account_id',
-        'type',
-        'slug',
-        'icon',
         'color',
+        'amount',
+        'account_id',
+        'period',
+        'day_of_month',
+        'day_of_week',
+        'month_of_year',
+        'month_of_quarter',
         'status',
     ];
-
-    public function sluggable(): array
-    {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
-    }
 
     public function owner(): BelongsTo
     {
@@ -42,5 +36,10 @@ class Category extends Model
     public function scopeTenant(Builder $query): Builder
     {
         return $query->where('account_id', optional(Filament::getTenant())->id);
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, 'budget_category', 'budget_id', 'category_id');
     }
 }

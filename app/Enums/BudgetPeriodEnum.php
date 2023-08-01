@@ -2,11 +2,12 @@
 
 namespace App\Enums;
 
-enum TransactionTypeEnum: string
+enum BudgetPeriodEnum: string
 {
-    case DEPOSIT = 'deposit';
-    case WITHDRAW = 'withdraw';
-    case TRANSFER = 'transfer';
+    case WEEKLY = 'weekly';
+    case MONTHLY = 'monthly';
+    case QUARTERLY = 'quarterly';
+    case YEARLY = 'yearly';
 
     public static function toArray(): array
     {
@@ -15,7 +16,7 @@ enum TransactionTypeEnum: string
         }, self::cases());
     }
 
-    public static function toArrayExcept($except): array
+    public static function toArrayExcept(array $except): array
     {
         return array_filter(array_map(function ($value) use ($except) {
             if (in_array($value->value, $except)) {

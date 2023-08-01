@@ -36,7 +36,7 @@ class TransactionResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Forms\Components\Section::make()
                     ->schema([
                         Hidden::make('from_hub')
                             ->default(true)

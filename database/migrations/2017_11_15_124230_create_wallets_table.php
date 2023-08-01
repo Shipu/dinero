@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Enums\WalletTypeEnum;
 use App\Models\Account;
-use Bavix\Wallet\Models\Transaction;
-use Bavix\Wallet\Models\Wallet;
+use App\Models\Wallet;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,7 +21,7 @@ return new class() extends Migration {
             $table->uuid('uuid')
                 ->unique();
             $table->foreignIdFor(Account::class)->constrained((new Account())->getTable())->cascadeOnDelete();
-            $table->string('type')->default(\App\Enums\WalletTypeEnum::GENERAL->value);
+            $table->string('type')->default(WalletTypeEnum::GENERAL->value);
             $table->string('currency_code')->default('USD');
             $table->string('icon')->nullable();
             $table->string('color')->nullable();
@@ -41,14 +41,6 @@ return new class() extends Migration {
 
             $table->unique(['holder_type', 'holder_id', 'slug']);
         });
-
-        Schema::table($this->transactionTable(), function (Blueprint $table) {
-            $table->foreign('wallet_id')
-                ->references('id')
-                ->on($this->table())
-                ->onDelete('cascade')
-            ;
-        });
     }
 
     public function down(): void
@@ -60,10 +52,5 @@ return new class() extends Migration {
     private function table(): string
     {
         return (new Wallet())->getTable();
-    }
-
-    private function transactionTable(): string
-    {
-        return (new Transaction())->getTable();
     }
 };

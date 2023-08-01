@@ -2,37 +2,24 @@
 
 namespace App\Models;
 
-use Cviebrock\EloquentSluggable\Sluggable;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Shipu\Watchable\Traits\WatchableTrait;
 
-class Category extends Model
+class Goal extends Model
 {
-    use HasFactory, SoftDeletes, WatchableTrait, Sluggable;
+    use HasFactory, WatchableTrait;
 
     protected $fillable = [
         'name',
-        'account_id',
-        'type',
-        'slug',
-        'icon',
+        'amount',
+        'target_date',
         'color',
-        'status',
+        'currency_code',
     ];
-
-    public function sluggable(): array
-    {
-        return [
-            'slug' => [
-                'source' => 'name'
-            ]
-        ];
-    }
 
     public function owner(): BelongsTo
     {

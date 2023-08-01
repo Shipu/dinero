@@ -60,4 +60,14 @@ class Account extends Model implements HasCurrentTenantLabel
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function goals(): HasMany
+    {
+        return $this->hasMany(Goal::class);
+    }
+
+    public function budgets(): HasMany
+    {
+        return $this->hasMany(Budget::class);
+    }
 }

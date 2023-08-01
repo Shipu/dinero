@@ -14,13 +14,8 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\Layout\Panel;
-use Filament\Tables\Columns\Layout\Stack;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class WalletResource extends Resource
 {
@@ -32,7 +27,7 @@ class WalletResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Forms\Components\Section::make()
                     ->schema([
                         TextInput::make('name')
                             ->label(__('wallets.fields.name'))
@@ -46,6 +41,15 @@ class WalletResource extends Resource
                             ->default(WalletTypeEnum::GENERAL->value)
                             ->live(),
                         TextInput::make('balance')
+                            ->label(__('wallets.fields.initial_balance'))
+                            ->required()
+                            ->numeric()
+                            ->inputMode('decimal')
+                            ->default(0)
+                            ->columnSpan(2)
+                            ->disabled()
+                            ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::GENERAL->value && $operation !== 'create'),
+                        TextInput::make('meta.initial_balance')
                             ->label(__('wallets.fields.initial_balance'))
                             ->required()
                             ->numeric()
@@ -144,6 +148,8 @@ class WalletResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
+            ])->emptyStateActions([
+                Tables\Actions\CreateAction::make(),
             ]);
     }
     

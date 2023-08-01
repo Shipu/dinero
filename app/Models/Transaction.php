@@ -6,6 +6,7 @@ use App\Enums\SpendTypeEnum;
 use App\Enums\TransactionTypeEnum;
 use Bavix\Wallet\Internal\Service\UuidFactoryServiceInterface;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -41,6 +42,11 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function scopeTenant(Builder $query): Builder
+    {
+        return $query->where('account_id', optional(Filament::getTenant())->id);
     }
 
     public function wallet(): BelongsTo

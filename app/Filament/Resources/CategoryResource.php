@@ -11,6 +11,7 @@ use App\Tables\Columns\IconColorColumn;
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Radio;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -19,7 +20,6 @@ use Filament\Tables;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
-use Guava\FilamentIconPicker\Tables\IconColumn;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
@@ -33,12 +33,14 @@ class CategoryResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Card::make()
+                Section::make()
                     ->columns(2)
                     ->schema([
                         Radio::make('type')
                             ->label(__('categories.fields.type'))
-                            ->columnSpan(2)
+                            ->columnSpan([
+                                'sm' => 2,
+                            ])
                             ->options(collect(__('categories.types'))->pluck('label', 'id')->reverse())
 //                            ->descriptions(collect(__('categories.types'))->pluck('description', 'id'))
                             ->inline()
@@ -55,7 +57,9 @@ class CategoryResource extends Resource
                             ->label(__('categories.fields.icon'))
 //                            ->sets(['lucide-icons'])
                             ->sets(['heroicons', 'fontawesome-solid'])
-                            ->columnSpan(2)
+                            ->columnSpan([
+                                'sm' => 2,
+                            ])
                             ->preload()
                             ->columns([
                                 'default' => 1,
@@ -105,7 +109,7 @@ class CategoryResource extends Resource
                         VisibilityStatusEnum::INACTIVE->value => 'danger',
                         default => 'gray',
                     }),
-//                    ->formatStateUsing(fn (string $state): string => __("categories.visibility_statuses.{$state}")),
+//                    ->formatStateUsing(fn (string $state): string => __("utilities.visibility_statuses.{$state}")),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

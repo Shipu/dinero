@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\SpendTypeEnum;
-use App\Enums\VisibilityStatusEnum;
 
 return [
     'title' => 'Categories',
@@ -25,9 +24,5 @@ return [
             'label' => 'Expense',
             'description' => 'your expense category',
         ],
-    ],
-    'visibility_statuses' => [
-        VisibilityStatusEnum::ACTIVE->value   => 'Active',
-        VisibilityStatusEnum::INACTIVE->value => 'Inactive',
-    ],
+    ]
 ];

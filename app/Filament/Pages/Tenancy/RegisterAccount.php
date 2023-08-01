@@ -34,7 +34,8 @@ class RegisterAccount extends RegisterTenant
     {
         return $form
             ->schema([
-                TextInput::make('name'),
+                TextInput::make('name')
+                    ->placeholder('Personal Account'),
             ]);
     }
 
