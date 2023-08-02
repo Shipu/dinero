@@ -78,6 +78,9 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
 
     public function onModelSaving(): void
     {
+        if($this->type == TransactionTypeEnum::TRANSFER->value) {
+            $this->type = $this->getOriginal('type');
+        }
         $this->meta = array_merge($this->getOriginal('meta') ?? [], $this->meta);
     }
 

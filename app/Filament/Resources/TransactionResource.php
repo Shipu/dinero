@@ -69,6 +69,7 @@ class TransactionResource extends Resource
                         DateTimePicker::make('happened_at')
                             ->label(__('transactions.fields.happened_at'))
                             ->native(false)
+                            ->required()
                             ->seconds(false)
                             ->displayFormat('d/m/Y h:i a')
                             ->default(now())

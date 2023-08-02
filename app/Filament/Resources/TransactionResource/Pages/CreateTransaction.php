@@ -60,8 +60,8 @@ class CreateTransaction extends CreateRecord
         $fromWallet = Wallet::findOrFail($data['from_wallet_id']);
         $toWallet = Wallet::findOrFail($data['to_wallet_id']);
         $transfer = $fromWallet->transfer($toWallet, $data['amount'], new Extra(
-            deposit: ['transfer' => true],
-            withdraw: ['transfer' => true]
+            deposit: ['transfer' => true, 'happened_at' => $data['happened_at'] ?? now()],
+            withdraw: ['transfer' => true, 'happened_at' => $data['happened_at'] ?? now()],
         ));
         $this->record = $transfer->deposit;
     }

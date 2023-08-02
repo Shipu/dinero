@@ -11,6 +11,7 @@ final class FilamentTransactionDtoTransformer implements TransactionDtoTransform
     public function extract(TransactionDtoInterface $dto): array
     {
         return [
+            'happened_at' => $dto->getMeta()['happened_at'] ?? now(), // '2021-01-01 00:00:00
             'category_id' => $dto->getMeta()['category_id'] ?? null,
             'account_id' => optional(Filament::getTenant())->id ?? $dto->getMeta()['account_id'] ?? null,
             'uuid' => $dto->getUuid(),
