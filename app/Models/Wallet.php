@@ -51,15 +51,14 @@ class Wallet extends BaseWallet
     {
         $this->holder_type = User::class;
         $this->holder_id = auth()->user()->id;
-        $this->meta = [
+        $this->meta = array_merge($this->meta, [
             'currency' => $this->currency_code,
-        ];
+        ]);
     }
 
     public function onModelCreated(): void
     {
         $amount = $this->meta['initial_balance'] ?? 0;
-        dd($amount, $this->meta);
         if($this->type == WalletTypeEnum::CREDIT_CARD->value) {
             $amount = $this->meta['total_due'] ?? 0;
             if($amount > 0) {

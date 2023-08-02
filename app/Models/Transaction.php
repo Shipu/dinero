@@ -78,7 +78,7 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
 
     public function onModelSaving(): void
     {
-        $this->meta = array_merge($this->getOriginal('meta'), $this->meta);
+        $this->meta = array_merge($this->getOriginal('meta') ?? [], $this->meta);
     }
 
     public function isTransferTransaction(): Attribute

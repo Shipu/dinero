@@ -15,6 +15,10 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    dd(\App\Models\Wallet::all()->last()->refreshBalance());
+    dd(\App\Models\Wallet::first()->withdraw(20, [
+        'account_id' => '01h6s8xtdq50m3pjhg4sndnb1k',
+    ]));
     return view('welcome');
 });
 

@@ -20,6 +20,7 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -209,6 +210,8 @@ class TransactionResource extends Resource
                 Tables\Columns\TextColumn::make('wallet.name')
                     ->label(__('transactions.fields.wallet'))
                     ->numeric()
+                    ->badge()
+                    ->color(fn(?Model $record): array => Color::hex(optional($record->wallet)->color ?? 'primary'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
@@ -236,6 +239,12 @@ class TransactionResource extends Resource
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->options(collect(__('transactions.types'))->except([TransactionTypeEnum::TRANSFER->value])->pluck('label', 'id')->toArray()),
+                Tables\Filters\SelectFilter::make('wallet_id')
+                    ->label(__('transactions.fields.wallet'))
+                    ->relationship('wallet', 'name')
+                    ->multiple()
+                    ->preload()
+                    ->searchable(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([

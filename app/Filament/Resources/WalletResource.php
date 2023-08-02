@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\DebtTypeEnum;
 use App\Enums\WalletTypeEnum;
 use App\Filament\Resources\WalletResource\Pages;
 use App\Filament\Resources\WalletResource\RelationManagers;
@@ -13,9 +14,11 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
+use Illuminate\Database\Eloquent\Model;
 
 class WalletResource extends Resource
 {
@@ -39,7 +42,8 @@ class WalletResource extends Resource
                             ->required()
                             ->options(__('wallets.types'))
                             ->default(WalletTypeEnum::GENERAL->value)
-                            ->live(),
+                            ->live()
+                            ->disabled(fn (string $operation): bool => $operation !== 'create'),
                         TextInput::make('balance')
                             ->label(__('wallets.fields.initial_balance'))
                             ->required()
@@ -113,19 +117,27 @@ class WalletResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ColorColumn::make('color')
-                    ->label(__('wallets.fields.color')),
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('wallets.fields.name'))
+                    ->color(fn (?Model $record) => Color::hex($record->color))
+                    ->badge()
+                    ->weight('bold')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->label(__('wallets.fields.type'))
                     ->badge()
+                    ->color(function (string $state) {
+                        return match ($state) {
+                            WalletTypeEnum::CREDIT_CARD->value => 'danger',
+                            WalletTypeEnum::GENERAL->value => 'success',
+                        };
+                    })
                     ->formatStateUsing(fn (string $state): string => __("wallets.types.{$state}"))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('balance')
                     ->label(__('wallets.fields.balance'))
+                    ->weight('bold')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency_code')
                     ->label(__('wallets.fields.currency_code'))

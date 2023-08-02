@@ -15,30 +15,43 @@ class CreateTransaction extends CreateRecord
 {
     protected static string $resource = TransactionResource::class;
 
-    public function create(bool $another = false): void
+    /**
+     * @throws Halt
+     */
+    protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $this->authorizeAccess();
-
-        try {
-            $this->callHook('beforeValidate');
-
-            $data = $this->form->getState();
-            if($data['type'] ?? null == TransactionTypeEnum::TRANSFER->value) {
-                $this->createTransferTransaction($data);
-
-                /** @internal Read the DocBlock above the following method. */
-                $this->sendCreatedNotificationAndRedirect(shouldCreateAnotherInsteadOfRedirecting: $another);
-            } else {
-                parent::create($another);
+        $type = ($data['type'] ?? null);
+        if($type == TransactionTypeEnum::WITHDRAW->value) {
+            $data['amount'] = $data['amount'] * -1;
+            try {
+                $this->validateCreditLimit($data);
+            } catch (InsufficientFunds $exception) {
+                Notification::make()
+                    ->danger()
+                    ->title("Insufficient funds")
+                    ->send();
+                $this->halt();
             }
-        } catch (Halt $exception) {
-            return;
-        } catch (InsufficientFunds $exception) {
-            Notification::make()
-                ->danger()
-                ->title("Insufficient funds")
-                ->send();
-            return;
+        } elseif($type == TransactionTypeEnum::TRANSFER->value) {
+            $this->createTransferTransaction($data);
+            $this->sendCreatedNotificationAndRedirect(shouldCreateAnotherInsteadOfRedirecting: false);
+            $this->halt();
+        }
+
+        return $data;
+    }
+
+    /**
+     * @throws Halt
+     */
+    public function validateCreditLimit($data): void
+    {
+        $wallet = Wallet::findOrFail($data['wallet_id']);
+        $amount = (double) $wallet->balance + ($data['amount']);
+        $creditLimit = -1 * (double) $wallet->meta['credit'];
+
+        if($amount < $creditLimit) {
+            throw new InsufficientFunds('Insufficient funds');
         }
     }
 
