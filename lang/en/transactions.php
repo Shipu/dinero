@@ -37,5 +37,10 @@ return [
             'label' => 'Transfer',
             'description' => 'Transfer between your wallets',
         ],
+        TransactionTypeEnum::PAYMENT->value  => [
+            'id' => TransactionTypeEnum::PAYMENT->value,
+            'label' => 'Payment',
+            'description' => 'Payment to one wallet to another wallet',
+        ],
     ]
 ];

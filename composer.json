@@ -10,6 +10,7 @@
     "require": {
         "php": "^8.1",
         "akaunting/laravel-money": "^5.1",
+        "awcodes/filament-badgeable-column": "^2.0",
         "bavix/laravel-wallet": "^10.0",
         "blade-ui-kit/blade-icons": "^1.5",
         "cviebrock/eloquent-sluggable": "^10.0",

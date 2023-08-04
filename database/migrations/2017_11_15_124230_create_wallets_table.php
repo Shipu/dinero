@@ -37,6 +37,7 @@ return new class() extends Migration {
             $table->unsignedSmallInteger('decimal_places')
                 ->default(2)
             ;
+            $table->softDeletes();
             $table->timestamps();
 
             $table->unique(['holder_type', 'holder_id', 'slug']);

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\SpendTypeEnum;
 use App\Enums\TransactionTypeEnum;
+use App\Enums\WalletTypeEnum;
 use App\Filament\Resources\TransactionResource\Pages;
 use App\Filament\Resources\TransactionResource\RelationManagers;
 use App\Models\Transaction;
@@ -79,7 +80,7 @@ class TransactionResource extends Resource
                             ->required()
                             ->disabled(function(?Model $record){
                                 if(!blank($record)) {
-                                    if($record->isTransferTransaction) {
+                                    if($record->isTransferTransaction || $record->isPaymentTransaction) {
                                         return true;
                                     }
                                 }
@@ -99,7 +100,7 @@ class TransactionResource extends Resource
                             ->required()
                             ->columnSpan(function (?Model $record): int {
                                 if(!blank($record)) {
-                                    if($record->isTransferTransaction) {
+                                    if($record->isTransferTransaction || $record->isPaymentTransaction) {
                                         return 2;
                                     }
                                 }
@@ -107,7 +108,7 @@ class TransactionResource extends Resource
                             })
                             ->disabled(function (?Model $record): bool {
                                 if(!blank($record)) {
-                                    if($record->isTransferTransaction) {
+                                    if($record->isTransferTransaction || $record->isPaymentTransaction) {
                                         return true;
                                     }
                                 }
@@ -115,11 +116,11 @@ class TransactionResource extends Resource
                             })
                             ->visible(function (Get $get, ?Model $record): bool {
                                 if(!blank($record)) {
-                                    if($record->isTransferTransaction) {
+                                    if($record->isTransferTransaction || $record->isPaymentTransaction) {
                                         return true;
                                     }
                                 }
-                                return $get('type') != TransactionTypeEnum::TRANSFER->value;
+                                return in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value]);
                             }),
                         Select::make('category_id')
                             ->label(__('transactions.fields.category'))
@@ -138,10 +139,15 @@ class TransactionResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->visible(fn (Get $get): bool => $get('type') != TransactionTypeEnum::TRANSFER->value),
+                            ->visible(fn (Get $get): bool => in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value])),
                         Select::make('from_wallet_id')
                             ->label( __('transactions.fields.from_wallet'))
-                            ->relationship('wallet', 'name')
+                            ->relationship('wallet', 'name', function(Builder $query, Get $get){
+                                if($get('type') == TransactionTypeEnum::PAYMENT->value) {
+                                    $query = $query->where('type', WalletTypeEnum::GENERAL->value);
+                                }
+                                return $query;
+                            })
                             ->live()
                             ->columnSpan(function(Get $get, ?Model $record): int {
                                 return blank($get('from_wallet_id')) ? 2 : 1;
@@ -154,32 +160,36 @@ class TransactionResource extends Resource
                             })
                             ->visible(function(Get $get, ?Model $record): bool {
                                 if(!blank($record)) {
-                                    if($record->isTransferTransaction) {
+                                    if($record->isTransferTransaction || $record->isPaymentTransaction) {
                                         return false;
                                     }
                                 }
-                                return $get('type') == TransactionTypeEnum::TRANSFER->value;
+                                return in_array($get('type'), [TransactionTypeEnum::TRANSFER->value, TransactionTypeEnum::PAYMENT->value]);
                             }),
                         Select::make('to_wallet_id')
                             ->label(__('transactions.fields.to_wallet'))
                             ->relationship('wallet', 'name', function(Builder $query, Get $get){
-                                return $query->where('id', '!=', $get('from_wallet_id'));
+                                $query = $query->where('id', '!=', $get('from_wallet_id'));
+                                if($get('type') == TransactionTypeEnum::PAYMENT->value) {
+                                    $query = $query->where('type', WalletTypeEnum::CREDIT_CARD->value);
+                                }
+                                return $query;
                             })
                             ->searchable()
                             ->preload()
                             ->required()
                             ->visible(function (Get $get, ?Model $record): bool {
                                 if(!blank($record)) {
-                                    if($record->isTransferTransaction) {
+                                    if($record->isTransferTransaction || $record->isPaymentTransaction) {
                                         return false;
                                     }
                                 }
-                                return $get('type') == TransactionTypeEnum::TRANSFER->value && !blank($get('from_wallet_id'));
+                                return in_array($get('type'), [TransactionTypeEnum::TRANSFER->value, TransactionTypeEnum::PAYMENT->value]) && !blank($get('from_wallet_id'));
                             }),
                         Toggle::make('confirmed')
                             ->label(__('transactions.fields.confirmed'))
                             ->default(true)
-                            ->visible(fn (Get $get): bool => $get('type') != TransactionTypeEnum::TRANSFER->value),
+                            ->visible(fn (Get $get): bool => in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value])),
 
                     ])->columns([
                         'sm' => 2,
@@ -210,8 +220,7 @@ class TransactionResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('wallet.name')
                     ->label(__('transactions.fields.wallet'))
-                    ->numeric()
-                    ->badge()
+                    ->weight('bold')
                     ->color(fn(?Model $record): array => Color::hex(optional($record->wallet)->color ?? 'primary'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type')
@@ -221,7 +230,7 @@ class TransactionResource extends Resource
                         TransactionTypeEnum::DEPOSIT->value => 'lucide-trending-up',
                     })
                     ->color(fn (string $state): string => match ($state) {
-                        TransactionTypeEnum::WITHDRAW->value => 'primary',
+                        TransactionTypeEnum::WITHDRAW->value => 'danger',
                         TransactionTypeEnum::DEPOSIT->value => 'warning',
                     })
                     ->formatStateUsing(fn (string $state): string => __("transactions.types.{$state}.label"))

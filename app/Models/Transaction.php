@@ -21,6 +21,8 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
     protected $fillable = [
         'payable_type',
         'payable_id',
+        'reference_type',
+        'reference_id',
         'wallet_id',
         'uuid',
         'type',
@@ -78,7 +80,7 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
 
     public function onModelSaving(): void
     {
-        if($this->type == TransactionTypeEnum::TRANSFER->value) {
+        if(in_array($this->type, [TransactionTypeEnum::TRANSFER->value, TransactionTypeEnum::PAYMENT->value])) {
             $this->type = $this->getOriginal('type');
         }
         $this->meta = array_merge($this->getOriginal('meta') ?? [], $this->meta);
@@ -89,6 +91,15 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
         return Attribute::make(
             get: function() {
                 return array_get($this->meta, 'transfer', false) ?? false;
+            }
+        );
+    }
+
+    public function isPaymentTransaction(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return array_get($this->meta, 'payment', false) ?? false;
             }
         );
     }

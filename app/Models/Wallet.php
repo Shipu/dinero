@@ -8,11 +8,12 @@ use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Shipu\Watchable\Traits\WatchableTrait;
 
 class Wallet extends BaseWallet
 {
-    use HasFactory, WatchableTrait;
+    use HasFactory, WatchableTrait, SoftDeletes;
 
     protected $fillable = [
         'holder_type',
@@ -33,6 +34,7 @@ class Wallet extends BaseWallet
         'payment_due_day_of_month',
         'credit_limit',
         'decimal_places',
+        'deleted_at',
         'created_at',
         'updated_at',
     ];

@@ -32,8 +32,8 @@ class CreateTransaction extends CreateRecord
                     ->send();
                 $this->halt();
             }
-        } elseif($type == TransactionTypeEnum::TRANSFER->value) {
-            $this->createTransferTransaction($data);
+        } elseif(in_array($type, [TransactionTypeEnum::TRANSFER->value, TransactionTypeEnum::PAYMENT->value])) {
+            $this->createTransferOrPaymentTransaction($data);
             $this->sendCreatedNotificationAndRedirect(shouldCreateAnotherInsteadOfRedirecting: false);
             $this->halt();
         }
@@ -55,13 +55,21 @@ class CreateTransaction extends CreateRecord
         }
     }
 
-    public function createTransferTransaction($data): void
+    public function createTransferOrPaymentTransaction($data): void
     {
         $fromWallet = Wallet::findOrFail($data['from_wallet_id']);
         $toWallet = Wallet::findOrFail($data['to_wallet_id']);
+        $meta = ['happened_at' => $data['happened_at'] ?? now(), 'type' => $data['type']];
+
+        if(array_get($data, 'type') == TransactionTypeEnum::PAYMENT->value) {
+            $meta['payment'] = true;
+        }elseif (array_get($data, 'type') == TransactionTypeEnum::TRANSFER->value) {
+            $meta['transfer'] = true;
+        }
+
         $transfer = $fromWallet->transfer($toWallet, $data['amount'], new Extra(
-            deposit: ['transfer' => true, 'happened_at' => $data['happened_at'] ?? now()],
-            withdraw: ['transfer' => true, 'happened_at' => $data['happened_at'] ?? now()],
+            deposit: $meta,
+            withdraw: $meta,
         ));
         $this->record = $transfer->deposit;
     }

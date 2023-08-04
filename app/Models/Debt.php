@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\DebtTypeEnum;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -38,5 +39,33 @@ class Debt extends Model
     public function wallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class);
+    }
+
+    public function onModelCreated(): void
+    {
+        if($this->type == DebtTypeEnum::RECEIVABLE->value) {
+            $this->wallet->withdraw($this->amount, ['debt' => true, 'debt_id' => $this->id]);
+        } elseif ($this->type == DebtTypeEnum::PAYABLE->value) {
+            $this->wallet->deposit($this->amount, ['debt' => true, 'debt_id' => $this->id]);
+        }
+    }
+
+    public function onModelUpdating()
+    {
+        $delta = $this->amount - $this->getOriginal('amount');
+        if($this->type == DebtTypeEnum::RECEIVABLE->value) {
+            if($delta > 0) {
+                $this->wallet->withdraw($delta, ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
+            } elseif ($delta != 0) {
+                $this->wallet->deposit(abs($delta), ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
+            }
+            $this->wallet->withdraw($delta, ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
+        } elseif ($this->type == DebtTypeEnum::PAYABLE->value) {
+            if($delta > 0) {
+                $this->wallet->deposit($delta, ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
+            } elseif ($delta != 0) {
+                $this->wallet->withdraw(abs($delta), ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
+            }
+        }
     }
 }

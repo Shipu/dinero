@@ -12,6 +12,8 @@ final class FilamentTransactionDtoTransformer implements TransactionDtoTransform
     {
         return [
             'happened_at' => $dto->getMeta()['happened_at'] ?? now(), // '2021-01-01 00:00:00
+            'reference_type' => $dto->getMeta()['reference_type'] ?? null,
+            'reference_id' => $dto->getMeta()['reference_id'] ?? null,
             'category_id' => $dto->getMeta()['category_id'] ?? null,
             'account_id' => optional(Filament::getTenant())->id ?? $dto->getMeta()['account_id'] ?? null,
             'uuid' => $dto->getUuid(),

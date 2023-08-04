@@ -29,6 +29,7 @@ return new class() extends Migration {
             $table->uuid('uuid')
                 ->unique();
             $table->timestamp('happened_at')->default(now());
+            $table->nullableMorphs('reference');
             $table->softDeletes();
             $table->timestamps();
 

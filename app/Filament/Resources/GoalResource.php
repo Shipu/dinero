@@ -5,8 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GoalResource\Pages;
 use App\Filament\Resources\GoalResource\RelationManagers;
 use App\Models\Goal;
-use Filament\Forms;
+use App\Tables\Columns\ProgressColumn;
+use Awcodes\FilamentBadgeableColumn\Components\Badge;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
 use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
@@ -14,11 +17,13 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Database\Eloquent\Model;
 
 class GoalResource extends Resource
 {
@@ -72,9 +77,15 @@ class GoalResource extends Resource
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('amount')
-                    ->label(__('goals.fields.amount'))
+                    ->label(__('goals.fields.target_amount'))
                     ->numeric()
                     ->sortable(),
+                BadgeableColumn::make('balance')
+                    ->label(__('goals.fields.balance'))
+                    ->suffixBadges([
+                        Badge::make('progress')
+                            ->label(fn(Model $record) => $record->progress. '%')
+                    ]),
                 TextColumn::make('target_date')
                     ->label(__('goals.fields.target_date'))
                     ->dateTime()
@@ -85,9 +96,49 @@ class GoalResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                //
+                Filter::make('created_at')
+                    ->label(__('goals.fields.created_at'))
+                    ->form([
+                        DatePicker::make('created_from')->label(__('goals.fields.created_from')),
+                        DatePicker::make('created_until')->label(__('goals.fields.created_until')),
+                    ])
+                    ->query(function (Builder $query, array $data): Builder {
+                        return $query
+                            ->when(
+                                $data['created_from'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('target_date', '>=', $date),
+                            )
+                            ->when(
+                                $data['created_until'],
+                                fn (Builder $query, $date): Builder => $query->whereDate('target_date', '<=', $date),
+                            );
+                    }),
             ])
+            ->defaultSort('target_date')
             ->actions([
+                Action::make('deposit')
+                    ->label(__('goals.actions.deposit'))
+                    ->icon('lucide-trending-up')
+                    ->color('danger')
+                    ->form(function(Goal $goal){
+                        return (new Pages\ListGoals())->getGoalTransactionFields(goalId: $goal->id);
+                    })
+                    ->action(function (array $data) {
+                        (new Pages\ListGoals())->makeGoalTransaction($data);
+                    }),
+                Action::make('withdraw')
+                    ->label(__('goals.actions.withdraw'))
+                    ->icon('lucide-trending-down')
+                    ->color('warning')
+                    ->form(function(Goal $goal){
+                        return (new Pages\ListGoals())->getGoalTransactionFields(
+                            type: 'withdraw',
+                            goalId: $goal->id
+                        );
+                    })
+                    ->action(function (array $data) {
+                        (new Pages\ListGoals())->makeGoalTransaction($data);
+                    }),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([

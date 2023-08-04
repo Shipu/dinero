@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Shipu\Watchable\Traits\WatchableTrait;
 
 class Goal extends Model
@@ -21,6 +23,24 @@ class Goal extends Model
         'currency_code',
     ];
 
+    public function progress(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return ($this->balance / $this->amount) * 100;
+            }
+        );
+    }
+
+    public function balance(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return $this->transactions->sum('amount') * -1;
+            }
+        );
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id');
@@ -29,5 +49,10 @@ class Goal extends Model
     public function scopeTenant(Builder $query): Builder
     {
         return $query->where('account_id', optional(Filament::getTenant())->id);
+    }
+
+    public function transactions(): MorphMany
+    {
+        return $this->morphMany(Transaction::class, 'reference');
     }
 }

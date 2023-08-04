@@ -120,7 +120,6 @@ class WalletResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('wallets.fields.name'))
                     ->color(fn (?Model $record) => Color::hex($record->color))
-                    ->badge()
                     ->weight('bold')
                     ->searchable()
                     ->sortable(),
