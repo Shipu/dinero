@@ -28,6 +28,8 @@ class BudgetResource extends Resource
 
     protected static ?string $navigationIcon = 'lucide-calculator';
 
+    protected static ?int $navigationSort = 300;
+
     public static function form(Form $form): Form
     {
         return $form

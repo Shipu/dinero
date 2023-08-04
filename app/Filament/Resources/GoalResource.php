@@ -5,7 +5,6 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\GoalResource\Pages;
 use App\Filament\Resources\GoalResource\RelationManagers;
 use App\Models\Goal;
-use App\Tables\Columns\ProgressColumn;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
 use Filament\Forms\Components\ColorPicker;
@@ -30,6 +29,8 @@ class GoalResource extends Resource
     protected static ?string $model = Goal::class;
 
     protected static ?string $navigationIcon = 'goal';
+
+    protected static ?int $navigationSort = 400;
 
     public static function form(Form $form): Form
     {

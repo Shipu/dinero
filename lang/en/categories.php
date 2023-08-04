@@ -10,6 +10,8 @@ return [
         'type' => 'Type',
         'icon' => 'Icon',
         'color' => 'Color',
+        'monthly_balance' => 'Monthly Balance',
+        'total' => 'Total',
         'is_visible' => 'Is Visible?',
         'is_visible_help_text' => 'Ignore this category on the total balance and not showing on the transaction list',
     ],

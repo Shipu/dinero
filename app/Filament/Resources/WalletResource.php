@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\DebtTypeEnum;
 use App\Enums\WalletTypeEnum;
 use App\Filament\Resources\WalletResource\Pages;
 use App\Filament\Resources\WalletResource\RelationManagers;
@@ -25,6 +24,8 @@ class WalletResource extends Resource
     protected static ?string $model = Wallet::class;
 
     protected static ?string $navigationIcon = 'lucide-wallet';
+
+    protected static ?int $navigationSort = 100;
 
     public static function form(Form $form): Form
     {

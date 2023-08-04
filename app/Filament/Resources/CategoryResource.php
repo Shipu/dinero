@@ -17,6 +17,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
@@ -28,6 +29,8 @@ class CategoryResource extends Resource
     protected static ?string $model = Category::class;
 
     protected static ?string $navigationIcon = 'lucide-layout-list';
+
+    protected static ?int $navigationSort = 200;
 
     public static function form(Form $form): Form
     {
@@ -97,6 +100,8 @@ class CategoryResource extends Resource
                     })
                     ->formatStateUsing(fn (string $state): string => __("categories.types.{$state}.label"))
                     ->searchable(),
+                Tables\Columns\TextColumn::make('monthly_balance')
+                    ->label(__('categories.fields.monthly_balance')),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('categories.fields.is_visible'))
                     ->icon(fn (string $state): string => match ($state) {
@@ -109,7 +114,6 @@ class CategoryResource extends Resource
                         VisibilityStatusEnum::INACTIVE->value => 'danger',
                         default => 'gray',
                     }),
-//                    ->formatStateUsing(fn (string $state): string => __("utilities.visibility_statuses.{$state}")),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -119,6 +123,7 @@ class CategoryResource extends Resource
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->deferLoading()
             ->filters([
                 Filter::make('status')
                     ->label(__('categories.fields.is_visible'))

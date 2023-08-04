@@ -34,6 +34,8 @@ class TransactionResource extends Resource
 
     protected static ?string $navigationIcon = 'receipt';
 
+    protected static ?int $navigationSort = 600;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -218,11 +220,6 @@ class TransactionResource extends Resource
                     ->label(__('transactions.fields.happened_at'))
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('wallet.name')
-                    ->label(__('transactions.fields.wallet'))
-                    ->weight('bold')
-                    ->color(fn(?Model $record): array => Color::hex(optional($record->wallet)->color ?? 'primary'))
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('type')
                     ->badge()
                     ->icon(fn (string $state): string => match ($state) {
@@ -239,6 +236,18 @@ class TransactionResource extends Resource
                 Tables\Columns\TextColumn::make('amount')
                     ->label(__('transactions.fields.amount'))
                     ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('wallet.name')
+                    ->label(__('transactions.fields.wallet'))
+                    ->weight('bold')
+                    ->color(fn(?Model $record): array => Color::hex(optional($record->wallet)->color ?? 'primary'))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('category.name')
+                    ->label(__('transactions.fields.category'))
+                    ->weight('bold')
+                    ->default('—')
+                    ->icon(fn(?Model $record): string => optional($record->category)->icon ?? '')
+                    ->color(fn(?Model $record): array => Color::hex(optional($record->category)->color ?? '#dcdcdc'))
                     ->sortable(),
                 Tables\Columns\IconColumn::make('confirmed')
                     ->label(__('transactions.fields.confirmed'))

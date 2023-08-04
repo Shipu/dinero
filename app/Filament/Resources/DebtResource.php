@@ -9,10 +9,16 @@ use App\Models\Debt;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
 use Filament\Forms;
+use Filament\Forms\Components\ColorPicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 
@@ -21,6 +27,8 @@ class DebtResource extends Resource
     protected static ?string $model = Debt::class;
 
     protected static ?string $navigationIcon = 'helping-hand';
+
+    protected static ?int $navigationSort = 500;
 
     public static function form(Form $form): Form
     {
@@ -34,12 +42,12 @@ class DebtResource extends Resource
                             ->inline()
                             ->default(DebtTypeEnum::PAYABLE->value)
                             ->required(),
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
                             ->label(__('debts.fields.name'))
                             ->required()
                             ->maxLength(255)
                             ->columnSpanFull(),
-                        Forms\Components\TextInput::make('amount')
+                        TextInput::make('amount')
                             ->label(__('debts.fields.amount'))
                             ->required()
                             ->numeric()
@@ -50,12 +58,12 @@ class DebtResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required(),
-                        Forms\Components\DateTimePicker::make('start_at')
+                        DateTimePicker::make('start_at')
                             ->label(__('debts.fields.start_at'))
                             ->default(now()),
-                        Forms\Components\ColorPicker::make('color')
+                        ColorPicker::make('color')
                             ->label(__('debts.fields.color')),
-                        Forms\Components\Textarea::make('description')
+                        Textarea::make('description')
                             ->label(__('debts.fields.description'))
                             ->maxLength(65535)
                             ->columnSpanFull(),
@@ -67,9 +75,9 @@ class DebtResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ColorColumn::make('color')
+                ColorColumn::make('color')
                     ->label(__('debts.fields.color')),
-                Tables\Columns\TextColumn::make('type')
+                TextColumn::make('type')
                     ->badge()
                     ->color(function (string $state) {
                         return match ($state) {
@@ -80,10 +88,10 @@ class DebtResource extends Resource
                     ->formatStateUsing(fn(string $state) => __('debts.types.' . $state))
                     ->label(__('debts.fields.type'))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('debts.fields.name'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('amount')
+                TextColumn::make('amount')
                     ->label(__('debts.fields.amount'))
                     ->numeric()
                     ->sortable(),
@@ -93,15 +101,16 @@ class DebtResource extends Resource
                         Badge::make('progress')
                             ->label(fn(Model $record) => $record->progress. '%')
                     ]),
-                Tables\Columns\TextColumn::make('wallet.name')
-                    ->label(__('debts.fields.wallet'))
+                TextColumn::make('wallet.name')
+                    ->label(__('debts.fields.initial_wallet'))
                     ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('start_at')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('start_at')
                     ->label(__('debts.fields.start_at'))
                     ->dateTime()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->limit(20)
                     ->searchable()
                     ->label(__('debts.fields.description')),

@@ -68,29 +68,33 @@ class Debt extends Model
 
     public function onModelCreated(): void
     {
-        if($this->type == DebtTypeEnum::RECEIVABLE->value) {
-            $this->wallet->withdraw($this->amount, ['debt' => true, 'debt_id' => $this->id]);
-        } elseif ($this->type == DebtTypeEnum::PAYABLE->value) {
-            $this->wallet->deposit($this->amount, ['debt' => true, 'debt_id' => $this->id]);
+        $meta = ['reference_type' => Debt::class, 'reference_id' => $this->id];
+        $method = match ($this->type) {
+            DebtTypeEnum::RECEIVABLE->value => 'withdraw',
+            DebtTypeEnum::PAYABLE->value => 'deposit',
+            default => null,
+        };
+
+        if(!blank($method)) {
+            $this->wallet->{$method}($this->amount, $meta);
         }
     }
 
-    public function onModelUpdating()
+    public function onModelUpdating(): void
     {
+        $meta = ['reference_type' => Debt::class, 'reference_id' => $this->id];
         $delta = $this->amount - $this->getOriginal('amount');
-        if($this->type == DebtTypeEnum::RECEIVABLE->value) {
-            if($delta > 0) {
-                $this->wallet->withdraw($delta, ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
-            } elseif ($delta != 0) {
-                $this->wallet->deposit(abs($delta), ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
-            }
-            $this->wallet->withdraw($delta, ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
-        } elseif ($this->type == DebtTypeEnum::PAYABLE->value) {
-            if($delta > 0) {
-                $this->wallet->deposit($delta, ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
-            } elseif ($delta != 0) {
-                $this->wallet->withdraw(abs($delta), ['debt' => true, 'debt_id' => $this->id, 'update' => true]);
-            }
+        $method = null;
+
+        if($delta > 0) {
+            $method = $this->type == DebtTypeEnum::RECEIVABLE->value ? 'withdraw' : 'deposit';
+        } elseif ($delta != 0) {
+            $delta = abs($delta);
+            $method = $this->type == DebtTypeEnum::RECEIVABLE->value ? 'deposit' : 'withdraw';
+        }
+
+        if(!blank($method)) {
+            $this->wallet->{$method}($delta, $meta);
         }
     }
 }

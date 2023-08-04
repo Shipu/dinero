@@ -28,6 +28,7 @@
         "shipu/watchable": "dev-master"
     },
     "require-dev": {
+        "barryvdh/laravel-debugbar": "^3.8",
         "doctrine/dbal": "^3.6",
         "fakerphp/faker": "^1.9.1",
         "laravel/pint": "^1.0",

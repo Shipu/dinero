@@ -12,7 +12,7 @@ return [
         'confirmed' => 'Confirmed',
         'category' => 'Category',
         'account' => 'Account',
-        'happened_at' => 'Happened At',
+        'happened_at' => 'Happened',
         'description' => 'Description',
         'type' => 'Type',
         'wallet' => 'Wallet',

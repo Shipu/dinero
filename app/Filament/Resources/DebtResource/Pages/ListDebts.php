@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\DebtResource\Pages;
 
+use App\Enums\DebtActionTypeEnum;
 use App\Enums\DebtTypeEnum;
 use App\Filament\Resources\DebtResource;
 use App\Models\Debt;
@@ -9,9 +10,11 @@ use App\Models\Goal;
 use App\Models\Wallet;
 use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Resources\Pages\ListRecords\Tab;
@@ -25,7 +28,7 @@ class ListDebts extends ListRecords
     {
         return [
             Action::make('deposit')
-                ->label(__('debts.actions.debt_collection'))
+                ->label(__('debts.actions.debt_transaction'))
                 ->color('danger')
                 ->icon('lucide-trending-up')
                 ->form($this->getDebtTransactionFields())
@@ -64,12 +67,29 @@ class ListDebts extends ListRecords
                 ->options(Debt::all()->pluck('name', 'id')->toArray())
                 ->visible(fn() => is_null($debtId))
                 ->searchable()
+                ->live()
+                ->required(),
+            Select::make('action_type')
+                ->label(__('debts.fields.action_type'))
+                ->options(function (Get $get) {
+                    if(blank($get('debt_id'))) {
+                        return [];
+                    }
+
+                    $debt = Debt::findOrFail($get('debt_id'));
+
+                    return __('debts.action_types.' . $debt->type);
+                })
+                ->searchable(fn(Get $get) => !blank($get('debt_id')))
                 ->required(),
             Select::make('wallet_id')
                 ->label(__('debts.fields.from_wallet'))
                 ->options(Wallet::all()->pluck('name', 'id')->toArray())
                 ->searchable()
                 ->required(),
+            DateTimePicker::make('happened_at')
+                ->label(__('debts.fields.happened_at'))
+                ->default(now()),
             TextInput::make('amount')
                 ->label(__('debts.fields.amount'))
                 ->numeric()
@@ -82,11 +102,26 @@ class ListDebts extends ListRecords
         try {
             $wallet = Wallet::findOrFail($data['wallet_id']);
             $amount = (double) $data['amount'];
+            $actionType = $data['action_type'];
+            $happenedAt = $data['happened_at'];
+            $method = null;
 
-            $wallet->deposit($amount, [
-                'reference_type' => Debt::class,
-                'reference_id' => $data['debt_id'],
-            ]);
+            if(in_array($actionType, [DebtActionTypeEnum::REPAYMENT->value, DebtActionTypeEnum::LOAN_INCREASE->value])) {
+                $method = 'withdraw';
+                $amount = $amount * -1;
+            } elseif (in_array($actionType, [DebtActionTypeEnum::DEBT_INCREASE->value, DebtActionTypeEnum::DEBT_COLLECTION->value])) {
+                $method = 'deposit';
+            }
+
+            //todo: add transaction about interest
+
+            if(!blank($method)) {
+                $wallet->{$method}($amount, [
+                    'happened_at' => $happenedAt,
+                    'reference_type' => Debt::class,
+                    'reference_id' => $data['debt_id'],
+                ]);
+            }
 
             Notification::make()
                 ->title('Saved successfully')
