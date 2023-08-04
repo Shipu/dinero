@@ -6,12 +6,15 @@ use App\Enums\DebtTypeEnum;
 use App\Filament\Resources\DebtResource\Pages;
 use App\Filament\Resources\DebtResource\RelationManagers;
 use App\Models\Debt;
+use Awcodes\FilamentBadgeableColumn\Components\Badge;
+use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class DebtResource extends Resource
 {
@@ -84,6 +87,12 @@ class DebtResource extends Resource
                     ->label(__('debts.fields.amount'))
                     ->numeric()
                     ->sortable(),
+                BadgeableColumn::make('balance')
+                    ->label(__('goals.fields.balance'))
+                    ->suffixBadges([
+                        Badge::make('progress')
+                            ->label(fn(Model $record) => $record->progress. '%')
+                    ]),
                 Tables\Columns\TextColumn::make('wallet.name')
                     ->label(__('debts.fields.wallet'))
                     ->numeric()
@@ -98,7 +107,7 @@ class DebtResource extends Resource
                     ->label(__('debts.fields.description')),
             ])
             ->filters([
-                //
+
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

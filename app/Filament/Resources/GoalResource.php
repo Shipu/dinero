@@ -96,20 +96,20 @@ class GoalResource extends Resource
                     ->searchable(),
             ])
             ->filters([
-                Filter::make('created_at')
-                    ->label(__('goals.fields.created_at'))
+                Filter::make('target_date')
+                    ->label(__('goals.fields.target_date'))
                     ->form([
-                        DatePicker::make('created_from')->label(__('goals.fields.created_from')),
-                        DatePicker::make('created_until')->label(__('goals.fields.created_until')),
+                        DatePicker::make('target_from')->label(__('goals.fields.target_from')),
+                        DatePicker::make('target_until')->label(__('goals.fields.target_until')),
                     ])
                     ->query(function (Builder $query, array $data): Builder {
                         return $query
                             ->when(
-                                $data['created_from'],
+                                $data['target_from'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('target_date', '>=', $date),
                             )
                             ->when(
-                                $data['created_until'],
+                                $data['target_until'],
                                 fn (Builder $query, $date): Builder => $query->whereDate('target_date', '<=', $date),
                             );
                     }),

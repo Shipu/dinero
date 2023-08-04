@@ -5,9 +5,11 @@ namespace App\Models;
 use App\Enums\DebtTypeEnum;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Shipu\Watchable\Traits\WatchableTrait;
 
@@ -26,6 +28,24 @@ class Debt extends Model
         'color',
     ];
 
+    public function progress(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return ($this->balance / $this->amount) * 100;
+            }
+        );
+    }
+
+    public function balance(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                return $this->transactions->sum('amount');
+            }
+        );
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id');
@@ -39,6 +59,11 @@ class Debt extends Model
     public function wallet(): BelongsTo
     {
         return $this->belongsTo(Wallet::class);
+    }
+
+    public function transactions(): MorphMany
+    {
+        return $this->morphMany(Transaction::class, 'reference');
     }
 
     public function onModelCreated(): void

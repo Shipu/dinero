@@ -22,7 +22,7 @@ return [
         'goal' => 'Goal',
         'target_amount' => 'Target Amount',
         'balance' => 'Balance',
-        'created_from' => 'Created From',
-        'created_until' => 'Created Until',
+        'target_from' => 'Target From',
+        'target_until' => 'Target Until',
     ],
 ];
