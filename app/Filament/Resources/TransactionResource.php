@@ -102,7 +102,7 @@ class TransactionResource extends Resource
                             ->required()
                             ->columnSpan(function (?Model $record): int {
                                 if(!blank($record)) {
-                                    if($record->isTransferTransaction || $record->isPaymentTransaction) {
+                                    if($record->isTransferTransaction || $record->isPaymentTransaction || blank($record->category_id)) {
                                         return 2;
                                     }
                                 }
@@ -121,6 +121,8 @@ class TransactionResource extends Resource
                                     if($record->isTransferTransaction || $record->isPaymentTransaction) {
                                         return true;
                                     }
+
+                                    return !blank($record->wallet_id);
                                 }
                                 return in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value]);
                             }),
@@ -141,7 +143,12 @@ class TransactionResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->visible(fn (Get $get): bool => in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value])),
+                            ->visible(function (Get $get, ?Model $record): bool {
+                                if(!blank($record)) {
+                                    return !blank($record->category_id);
+                                }
+                                return in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value]);
+                            }),
                         Select::make('from_wallet_id')
                             ->label( __('transactions.fields.from_wallet'))
                             ->relationship('wallet', 'name', function(Builder $query, Get $get){
@@ -240,7 +247,8 @@ class TransactionResource extends Resource
                 Tables\Columns\TextColumn::make('wallet.name')
                     ->label(__('transactions.fields.wallet'))
                     ->weight('bold')
-                    ->color(fn(?Model $record): array => Color::hex(optional($record->wallet)->color ?? 'primary'))
+                    ->default('—')
+                    ->color(fn(?Model $record): array => Color::hex(optional($record->wallet)->color ?? '#dcdcdc'))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('category.name')
                     ->label(__('transactions.fields.category'))

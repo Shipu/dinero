@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\DebtTypeEnum;
+use App\Enums\TransactionTypeEnum;
 use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -32,7 +33,23 @@ class Debt extends Model
     {
         return Attribute::make(
             get: function() {
-                return ($this->balance / $this->amount) * 100;
+                if($this->total_debt_amount == 0) {
+                    return 100;
+                }
+                return number_format(($this->balance / $this->total_debt_amount) * 100, 2);
+            }
+        );
+    }
+
+    public function totalDebtAmount(): Attribute
+    {
+        return Attribute::make(
+            get: function() {
+                $query = $this->transactions();
+                return match ($this->type) {
+                    DebtTypeEnum::PAYABLE->value => $query->where('type', '<>', TransactionTypeEnum::WITHDRAW->value)->sum('amount'),
+                    DebtTypeEnum::RECEIVABLE->value => $query->where('type', '<>', TransactionTypeEnum::DEPOSIT->value)->sum('amount') * -1,
+                };
             }
         );
     }
@@ -41,7 +58,17 @@ class Debt extends Model
     {
         return Attribute::make(
             get: function() {
-                return $this->transactions->sum('amount');
+                $query = $this->transactions->whereNotNull('wallet_id');
+
+                $query = match ($this->type) {
+                    DebtTypeEnum::PAYABLE->value => $query->where('type', TransactionTypeEnum::WITHDRAW->value),
+                    DebtTypeEnum::RECEIVABLE->value => $query->where('type', TransactionTypeEnum::DEPOSIT->value),
+                };
+
+                return match ($this->type) {
+                    DebtTypeEnum::PAYABLE->value => $query->sum('amount') * -1,
+                    DebtTypeEnum::RECEIVABLE->value => $query->sum('amount'),
+                };
             }
         );
     }

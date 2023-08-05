@@ -22,6 +22,7 @@ return [
         'debt' => 'Debt',
         'action_type' => 'Action Type',
         'from_wallet' => 'From Wallet',
+        'total_debt_amount' => 'Total Debt Amount',
     ],
     'types' => [
         DebtTypeEnum::PAYABLE->value => 'Payable',

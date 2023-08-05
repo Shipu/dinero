@@ -4,10 +4,13 @@ namespace App\Filament\Resources\DebtResource\Pages;
 
 use App\Enums\DebtActionTypeEnum;
 use App\Enums\DebtTypeEnum;
+use App\Enums\TransactionTypeEnum;
 use App\Filament\Resources\DebtResource;
 use App\Models\Debt;
 use App\Models\Goal;
+use App\Models\User;
 use App\Models\Wallet;
+use Bavix\Wallet\Internal\Service\UuidFactoryServiceInterface;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DateTimePicker;
@@ -33,7 +36,7 @@ class ListDebts extends ListRecords
                 ->icon('lucide-trending-up')
                 ->form($this->getDebtTransactionFields())
                 ->action(function (array $data) {
-                    $this->makeGoalTransaction($data);
+                    $this->makeDebtTransaction($data);
                 }),
             Actions\CreateAction::make(),
         ];
@@ -81,12 +84,14 @@ class ListDebts extends ListRecords
                     return __('debts.action_types.' . $debt->type);
                 })
                 ->searchable(fn(Get $get) => !blank($get('debt_id')))
+                ->live()
                 ->required(),
             Select::make('wallet_id')
-                ->label(__('debts.fields.from_wallet'))
+                ->label(__('debts.fields.wallet'))
                 ->options(Wallet::all()->pluck('name', 'id')->toArray())
                 ->searchable()
-                ->required(),
+                ->required()
+                ->visible(fn(Get $get) => !in_array($get('action_type'), [DebtActionTypeEnum::LOAN_INTEREST->value, DebtActionTypeEnum::DEBT_INTEREST->value])),
             DateTimePicker::make('happened_at')
                 ->label(__('debts.fields.happened_at'))
                 ->default(now()),
@@ -97,25 +102,25 @@ class ListDebts extends ListRecords
         ];
     }
 
-    public function makeGoalTransaction($data): void
+    public function makeDebtTransaction($data): void
     {
         try {
-            $wallet = Wallet::findOrFail($data['wallet_id']);
             $amount = (double) $data['amount'];
             $actionType = $data['action_type'];
             $happenedAt = $data['happened_at'];
-            $method = null;
+            $method = match ($actionType) {
+                DebtActionTypeEnum::REPAYMENT->value, DebtActionTypeEnum::LOAN_INCREASE->value => 'withdraw',
+                DebtActionTypeEnum::DEBT_INCREASE->value, DebtActionTypeEnum::DEBT_COLLECTION->value => 'deposit',
+                default => null,
+            };
 
-            if(in_array($actionType, [DebtActionTypeEnum::REPAYMENT->value, DebtActionTypeEnum::LOAN_INCREASE->value])) {
-                $method = 'withdraw';
-                $amount = $amount * -1;
-            } elseif (in_array($actionType, [DebtActionTypeEnum::DEBT_INCREASE->value, DebtActionTypeEnum::DEBT_COLLECTION->value])) {
-                $method = 'deposit';
+            if (in_array($actionType, [DebtActionTypeEnum::DEBT_INTEREST->value, DebtActionTypeEnum::LOAN_INTEREST->value])) {
+                $debt = Debt::findOrFail($data['debt_id']);
+                $this->makeInterestTransaction(debt: $debt, amount: $amount, actionType: $actionType, happenedAt: $happenedAt);
             }
 
-            //todo: add transaction about interest
-
             if(!blank($method)) {
+                $wallet = Wallet::findOrFail($data['wallet_id']);
                 $wallet->{$method}($amount, [
                     'happened_at' => $happenedAt,
                     'reference_type' => Debt::class,
@@ -133,5 +138,31 @@ class ListDebts extends ListRecords
                 ->danger()
                 ->send();
         }
+    }
+
+    public function makeInterestTransaction(Debt $debt, $amount, $actionType, $happenedAt = null): void
+    {
+        $type = match ($debt->type) {
+            DebtTypeEnum::PAYABLE->value => TransactionTypeEnum::DEPOSIT->value,
+            DebtTypeEnum::RECEIVABLE->value => TransactionTypeEnum::WITHDRAW->value,
+            default => null,
+        };
+        $debt->transactions()->create([
+            'type' => $type,
+            'account_id' => $debt->account_id,
+            'payable_type' => User::class,
+            'uuid' => app(UuidFactoryServiceInterface::class)->uuid4(),
+            'payable_id' => optional(auth()->user())->id,
+            'amount' => match ($debt->type) {
+                DebtTypeEnum::PAYABLE->value => $amount,
+                DebtTypeEnum::RECEIVABLE->value => $amount * -1,
+                default => 0,
+            },
+            'happened_at' => $happenedAt ?? now(),
+            'confirmed' => true,
+            'meta' => [
+                'action_type' => $actionType,
+            ]
+        ]);
     }
 }

@@ -75,6 +75,7 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
         $this->type = match (optional($this->category)->type) {
             SpendTypeEnum::EXPENSE->value => TransactionTypeEnum::WITHDRAW->value,
             SpendTypeEnum::INCOME->value => TransactionTypeEnum::DEPOSIT->value,
+            default => $this->type,
         };
     }
 
@@ -106,6 +107,6 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
 
     public function onModelSaved(): void
     {
-        $this->wallet->refreshBalance();
+        optional($this->wallet)->refreshBalance();
     }
 }

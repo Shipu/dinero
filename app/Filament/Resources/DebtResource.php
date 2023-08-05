@@ -17,6 +17,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Columns\ColorColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -91,8 +92,8 @@ class DebtResource extends Resource
                 TextColumn::make('name')
                     ->label(__('debts.fields.name'))
                     ->searchable(),
-                TextColumn::make('amount')
-                    ->label(__('debts.fields.amount'))
+                TextColumn::make('total_debt_amount')
+                    ->label(__('debts.fields.total_debt_amount'))
                     ->numeric()
                     ->sortable(),
                 BadgeableColumn::make('balance')
@@ -119,6 +120,17 @@ class DebtResource extends Resource
 
             ])
             ->actions([
+                Action::make('deposit')
+                    ->label(__('debts.actions.debt_transaction'))
+                    ->color('danger')
+                    ->icon('lucide-trending-up')
+                    ->form(function(Debt $debt){
+                        return (new Pages\ListDebts())->getDebtTransactionFields(debtId: $debt->id);
+                    })
+                    ->action(function (array $data) {
+                        (new Pages\ListDebts())->makeDebtTransaction($data);
+                    })
+                    ->visible(fn(Debt $debt) => $debt->progress < 100),
                 Tables\Actions\EditAction::make(),
             ])
             ->bulkActions([
