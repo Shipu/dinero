@@ -13,15 +13,3 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-
-function abc($a) {
-    return 'test '.$a;
-};
-
-Route::get('/', function () {
-
-    $test = 'abc';
-
-    dd($test(1));
-    return view('welcome');
-});
