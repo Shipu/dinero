@@ -31,7 +31,6 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('hub')
-            ->path('hub')
             ->login()
             ->colors([
                 'primary' => Color::Sky,

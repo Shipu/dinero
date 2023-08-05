@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\DebtTypeEnum;
 use App\Filament\Resources\DebtResource\Pages;
 use App\Filament\Resources\DebtResource\RelationManagers;
+use App\Filament\Resources\DebtResource\RelationManagers\TransactionsRelationManager;
 use App\Models\Debt;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
@@ -146,7 +147,7 @@ class DebtResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            TransactionsRelationManager::class,
         ];
     }
     

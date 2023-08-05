@@ -5,10 +5,9 @@ namespace App\Filament\Resources;
 use App\Enums\SpendTypeEnum;
 use App\Enums\VisibilityStatusEnum;
 use App\Filament\Resources\CategoryResource\Pages;
-use App\Filament\Resources\CategoryResource\RelationManagers;
+use App\Filament\Resources\CategoryResource\RelationManagers\TransactionsRelationManager;
 use App\Models\Category;
 use App\Tables\Columns\IconColorColumn;
-use Filament\Forms;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
@@ -17,7 +16,6 @@ use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
-use Filament\Tables\Columns\Summarizers\Sum;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
@@ -153,7 +151,7 @@ class CategoryResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            TransactionsRelationManager::class
         ];
     }
     

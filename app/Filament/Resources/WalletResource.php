@@ -46,7 +46,7 @@ class WalletResource extends Resource
                             ->live()
                             ->disabled(fn (string $operation): bool => $operation !== 'create'),
                         TextInput::make('balance')
-                            ->label(__('wallets.fields.initial_balance'))
+                            ->label(fn(string $operation): string => $operation == 'create' ? __('wallets.fields.initial_balance') : __('wallets.fields.balance'))
                             ->required()
                             ->numeric()
                             ->inputMode('decimal')
@@ -168,7 +168,7 @@ class WalletResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\TransactionsRelationManager::class,
         ];
     }
     

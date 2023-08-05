@@ -277,6 +277,7 @@ class TransactionResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make(),
             ])
+            ->deferLoading()
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\GoalResource\Pages;
 use App\Filament\Resources\GoalResource\RelationManagers;
+use App\Filament\Resources\GoalResource\RelationManagers\TransactionsRelationManager;
 use App\Models\Goal;
 use Awcodes\FilamentBadgeableColumn\Components\Badge;
 use Awcodes\FilamentBadgeableColumn\Components\BadgeableColumn;
@@ -46,7 +47,7 @@ class GoalResource extends Resource
                                 'sm' => 2,
                             ]),
                         TextInput::make('amount')
-                            ->label(__('goals.fields.amount'))
+                            ->label(__('goals.fields.target_amount'))
                             ->required()
                             ->numeric()
                             ->default(0.00),
@@ -155,7 +156,7 @@ class GoalResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            TransactionsRelationManager::class,
         ];
     }
     
