@@ -23,6 +23,7 @@
         "laravel/helpers": "^1.6",
         "laravel/sanctum": "^3.2",
         "laravel/tinker": "^2.8",
+        "leandrocfe/filament-apex-charts": "^3.0",
         "mallardduck/blade-lucide-icons": "^1.11",
         "rinvex/countries": "^9.0",
         "shipu/watchable": "dev-master"

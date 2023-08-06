@@ -36,6 +36,13 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
         'updated_at',
     ];
 
+    protected $casts = [
+        'wallet_id' => 'int',
+        'confirmed' => 'bool',
+        'meta' => 'json',
+        'happened_at' => 'datetime',
+    ];
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id');
