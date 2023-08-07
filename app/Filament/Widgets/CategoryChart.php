@@ -15,14 +15,14 @@ class CategoryChart extends ApexChartWidget
      */
     protected static string $chartId = 'categoryChart';
 
-    protected static ?int $contentHeight = 300;
+    protected static ?int $sort = 2;
 
     /**
      * Widget Title
      *
      * @var string|null
      */
-    protected static ?string $heading = 'Category Transactions';
+    protected static ?string $heading = 'CategoryChart';
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -40,16 +40,38 @@ class CategoryChart extends ApexChartWidget
             ->map(function ($item) {
                 return $item->sum('amount');
             });
+
         return [
             'chart' => [
-                'type' => 'pie',
+                'type' => 'bar',
                 'height' => 300,
             ],
-            'series' => $transactions->values()->toArray(),
-            'labels' => Category::whereIn('id', $transactions->keys())->pluck('name')->toArray(),
-            'legend' => [
+            'series' => [
+                [
+                    'name' => 'BasicBarChart',
+                    'data' => $transactions->values()->toArray(),
+                ],
+            ],
+            'xaxis' => [
+                'categories' => Category::whereIn('id', $transactions->keys())->pluck('name')->toArray(),
                 'labels' => [
-                    'fontFamily' => 'inherit',
+                    'style' => [
+                        'fontFamily' => 'inherit',
+                    ],
+                ],
+            ],
+            'yaxis' => [
+                'labels' => [
+                    'style' => [
+                        'fontFamily' => 'inherit',
+                    ],
+                ],
+            ],
+            'colors' => ['#f59e0b'],
+            'plotOptions' => [
+                'bar' => [
+                    'borderRadius' => 3,
+                    'horizontal' => true,
                 ],
             ],
         ];

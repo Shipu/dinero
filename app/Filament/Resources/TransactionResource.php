@@ -219,50 +219,55 @@ class TransactionResource extends Resource
             ]);
     }
 
+    public function tableColumns(): array
+    {
+        return [
+            Tables\Columns\TextColumn::make('happened_at')
+                ->label(__('transactions.fields.happened_at'))
+                ->dateTime()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('type')
+                ->badge()
+                ->icon(fn (string $state): string => match ($state) {
+                    TransactionTypeEnum::WITHDRAW->value => 'lucide-trending-down',
+                    TransactionTypeEnum::DEPOSIT->value => 'lucide-trending-up',
+                })
+                ->color(fn (string $state): string => match ($state) {
+                    TransactionTypeEnum::WITHDRAW->value => 'danger',
+                    TransactionTypeEnum::DEPOSIT->value => 'warning',
+                })
+                ->formatStateUsing(fn (string $state): string => __("transactions.types.{$state}.label"))
+                ->label(__('transactions.fields.type'))
+                ->searchable(),
+            Tables\Columns\TextColumn::make('amount')
+                ->label(__('transactions.fields.amount'))
+                ->numeric()
+                ->sortable(),
+            Tables\Columns\TextColumn::make('wallet.name')
+                ->label(__('transactions.fields.wallet'))
+                ->weight('bold')
+                ->default('—')
+                ->color(fn(?Model $record): array => Color::hex(optional($record->wallet)->color ?? '#dcdcdc'))
+                ->sortable(),
+            Tables\Columns\TextColumn::make('category.name')
+                ->label(__('transactions.fields.category'))
+                ->weight('bold')
+                ->default('—')
+                ->icon(fn(?Model $record): string => optional($record->category)->icon ?? '')
+                ->color(fn(?Model $record): array => Color::hex(optional($record->category)->color ?? '#dcdcdc'))
+                ->sortable(),
+            Tables\Columns\IconColumn::make('confirmed')
+                ->label(__('transactions.fields.confirmed'))
+                ->boolean()
+                ->trueIcon('lucide-check-circle')
+                ->falseIcon('lucide-x-circle'),
+        ];
+    }
+
     public static function table(Table $table): Table
     {
         return $table
-            ->columns([
-                Tables\Columns\TextColumn::make('happened_at')
-                    ->label(__('transactions.fields.happened_at'))
-                    ->dateTime()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('type')
-                    ->badge()
-                    ->icon(fn (string $state): string => match ($state) {
-                        TransactionTypeEnum::WITHDRAW->value => 'lucide-trending-down',
-                        TransactionTypeEnum::DEPOSIT->value => 'lucide-trending-up',
-                    })
-                    ->color(fn (string $state): string => match ($state) {
-                        TransactionTypeEnum::WITHDRAW->value => 'danger',
-                        TransactionTypeEnum::DEPOSIT->value => 'warning',
-                    })
-                    ->formatStateUsing(fn (string $state): string => __("transactions.types.{$state}.label"))
-                    ->label(__('transactions.fields.type'))
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('amount')
-                    ->label(__('transactions.fields.amount'))
-                    ->numeric()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('wallet.name')
-                    ->label(__('transactions.fields.wallet'))
-                    ->weight('bold')
-                    ->default('—')
-                    ->color(fn(?Model $record): array => Color::hex(optional($record->wallet)->color ?? '#dcdcdc'))
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('category.name')
-                    ->label(__('transactions.fields.category'))
-                    ->weight('bold')
-                    ->default('—')
-                    ->icon(fn(?Model $record): string => optional($record->category)->icon ?? '')
-                    ->color(fn(?Model $record): array => Color::hex(optional($record->category)->color ?? '#dcdcdc'))
-                    ->sortable(),
-                Tables\Columns\IconColumn::make('confirmed')
-                    ->label(__('transactions.fields.confirmed'))
-                    ->boolean()
-                    ->trueIcon('lucide-check-circle')
-                    ->falseIcon('lucide-x-circle'),
-            ])
+            ->columns((new TransactionResource())->tableColumns())
             ->filters([
                 Tables\Filters\SelectFilter::make('type')
                     ->options(collect(__('transactions.types'))->except([TransactionTypeEnum::TRANSFER->value])->pluck('label', 'id')->toArray()),

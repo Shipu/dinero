@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\TransactionResource\Pages;
 
 use App\Enums\TransactionTypeEnum;
+use App\Enums\WalletTypeEnum;
 use App\Filament\Resources\TransactionResource;
 use App\Models\Wallet;
 use Bavix\Wallet\Exceptions\InsufficientFunds;
@@ -48,10 +49,11 @@ class CreateTransaction extends CreateRecord
     {
         $wallet = Wallet::findOrFail($data['wallet_id']);
         $amount = (double) $wallet->balance + ($data['amount']);
-        $creditLimit = -1 * (double) $wallet->meta['credit'];
-
-        if($amount < $creditLimit) {
-            throw new InsufficientFunds('Insufficient funds');
+        if($wallet->type == WalletTypeEnum::CREDIT_CARD->value) {
+            $creditLimit = -1 * (double) array_get($wallet->meta, 'credit');
+            if($amount < $creditLimit) {
+                throw new InsufficientFunds('Insufficient funds');
+            }
         }
     }
 

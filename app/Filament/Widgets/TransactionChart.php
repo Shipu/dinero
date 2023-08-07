@@ -17,6 +17,8 @@ class TransactionChart extends ApexChartWidget
 
     protected static ?int $contentHeight = 300;
 
+    protected static ?int $sort = 1;
+
     /**
      * Widget Title
      *
