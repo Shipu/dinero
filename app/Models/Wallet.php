@@ -51,9 +51,11 @@ class Wallet extends BaseWallet
 
     public function onModelSaving(): void
     {
-        $this->holder_type = User::class;
-        $this->holder_id = auth()->user()->id;
-        $this->meta = array_merge($this->meta, [
+        if(filled(auth()->user())) {
+            $this->holder_type = User::class;
+            $this->holder_id = auth()->user()->id;
+        }
+        $this->meta = array_merge($this->meta ?? [], [
             'currency' => $this->currency_code,
         ]);
     }
