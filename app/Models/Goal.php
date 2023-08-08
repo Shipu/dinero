@@ -27,7 +27,7 @@ class Goal extends Model
     {
         return Attribute::make(
             get: function() {
-                return ($this->balance / $this->amount) * 100;
+                return $this->amount > 0 ? ($this->balance / $this->amount) * 100 : 0;
             }
         );
     }
