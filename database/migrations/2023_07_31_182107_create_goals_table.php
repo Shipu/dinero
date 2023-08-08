@@ -16,7 +16,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignIdFor(Account::class)->constrained((new Account())->getTable())->cascadeOnDelete();
-            $table->unsignedDecimal('amount')->default(0);
+            $table->unsignedDecimal('amount', 64, 0)->default(0);
             $table->timestamp('target_date')->nullable();
             $table->string('color')->nullable();
             $table->string('currency_code')->default('USD');
