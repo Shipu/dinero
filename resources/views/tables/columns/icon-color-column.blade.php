@@ -7,7 +7,7 @@
         @endif
 >
     @if ($icon = $getState())
-        <x-icon class="w-7 h-7 text-gray-100" name="{{$getState()}}"/>
+        <x-filament::icon class="w-7 h-7 text-gray-100" icon="{{$getState()}}"/>
     @elseif(!blank($getRecord()->color))
         <div
                 @class([
