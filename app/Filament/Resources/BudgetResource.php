@@ -57,7 +57,7 @@ class BudgetResource extends Resource
                             ->relationship(
                                 name: 'categories',
                                 titleAttribute: 'name',
-                                modifyQueryUsing: fn (Builder $query) => $query->where('type', SpendTypeEnum::EXPENSE->value),
+                                modifyQueryUsing: fn (Builder $query) => $query->tenant()->where('type', SpendTypeEnum::EXPENSE->value),
                             )
                             ->searchable()
                             ->preload()
