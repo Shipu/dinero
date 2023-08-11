@@ -1,5 +1,5 @@
 ## Dinero - Multi Account Money Tracker
-Dinero is a multi account money tracker. It is a simple application that allows you to track your money in multiple accounts and categories. It is written in PHP (Laravel Framework) and  Filament Admin GUI toolkit.
+Dinero is a multi account money tracker. It is a simple application that allows you to track your money in multiple accounts and categories. It is written in PHP (Laravel Framework) and  Filament v3.
 
 ## Features
 - Multi Account
