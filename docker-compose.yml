@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+    app:
+        build:
+            context: .
+            dockerfile: Dockerfile
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        volumes:
+            - .:/var/www/html
+            - /var/www/html/vendor
+        ports:
+            - '${APP_PORT:-8099}:80'
