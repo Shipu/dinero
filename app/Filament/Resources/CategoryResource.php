@@ -43,7 +43,6 @@ class CategoryResource extends Resource
                                 'sm' => 2,
                             ])
                             ->options(collect(__('categories.types'))->pluck('label', 'id')->reverse())
-//                            ->descriptions(collect(__('categories.types'))->pluck('description', 'id'))
                             ->inline()
                             ->default(SpendTypeEnum::EXPENSE->value)
                             ->required(),
