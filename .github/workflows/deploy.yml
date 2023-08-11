@@ -28,5 +28,5 @@ jobs:
   
               cat github.txt
               cd /var/www/demo/dinero
-              git pull
+              sudo git pull
             '
