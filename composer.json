@@ -18,7 +18,7 @@
         "filament/notifications": "^3.0",
         "guava/filament-icon-picker": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
-        "jeffgreco13/filament-breezy": "^v2.0.0-beta2",
+        "jeffgreco13/filament-breezy": "^v2.1.1",
         "laravel/framework": "^10.10",
         "laravel/helpers": "^1.6",
         "laravel/sanctum": "^3.2",
