@@ -8,10 +8,9 @@ on:
 
 jobs:
   deploy:
-      needs: [build]  # require build to pass before deploy runs
       name: Deploy
       runs-on: ubuntu-latest
-      environment: production
+      environment: prod
   
       steps:
       - name: Checkout
