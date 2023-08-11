@@ -39,7 +39,7 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
     protected $casts = [
         'wallet_id' => 'int',
         'confirmed' => 'bool',
-        'meta' => 'json',
+        'meta' => 'array',
         'happened_at' => 'datetime',
     ];
 
@@ -72,10 +72,12 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
 
     public function onModelCreating(): void
     {
-        if($this->from_hub) {
-            unset($this->from_hub);
+        if(blank($this->payable_id) && filled($user = auth()->user())) {
             $this->payable_type = User::class;
-            $this->payable_id = auth()->user()->id;
+            $this->payable_id = $user->id;
+        }
+
+        if(blank($this->uuid)) {
             $this->uuid = app(UuidFactoryServiceInterface::class)->uuid4();
         }
 
@@ -91,7 +93,7 @@ class Transaction extends \Bavix\Wallet\Models\Transaction
         if(in_array($this->type, [TransactionTypeEnum::TRANSFER->value, TransactionTypeEnum::PAYMENT->value])) {
             $this->type = $this->getOriginal('type');
         }
-        $this->meta = array_merge($this->getOriginal('meta') ?? [], $this->meta);
+        $this->meta = array_merge(($this->getOriginal('meta') ?? []), $this->meta ?? []);
     }
 
     public function isTransferTransaction(): Attribute
