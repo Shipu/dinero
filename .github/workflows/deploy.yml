@@ -1,0 +1,31 @@
+name: deploy
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:  
+
+jobs:
+  deploy:
+      needs: [build]  # require build to pass before deploy runs
+      name: Deploy
+      runs-on: ubuntu-latest
+      environment: production
+  
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+  
+      - name: SSH to Host
+        env:
+          AWS_PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+          AWS_HOSTNAME: ${{ secrets.AWS_HOSTNAME }}
+          AWS_USERNAME : ${{ secrets.AWS_USERNAME  }}
+  
+        run: |
+            echo "$AWS_PRIVATE_KEY" > private_key && chmod 600 private_key
+            ssh -o StrictHostKeyChecking=no -i private_key ${AWS_USERNAME}@${AWS_HOSTNAME} '
+  
+              cat shipu.txt
+            '
