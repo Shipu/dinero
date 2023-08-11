@@ -42,9 +42,6 @@ class TransactionResource extends Resource
             ->schema([
                 Forms\Components\Section::make()
                     ->schema([
-                        Hidden::make('from_hub')
-                            ->default(true)
-                            ->visible(fn (string $operation): bool => $operation === 'create'),
                         Radio::make('type')
                             ->default(TransactionTypeEnum::WITHDRAW->value)
                             ->formatStateUsing(function (string $state, ?Model $record): string {
