@@ -95,7 +95,7 @@ class Debt extends Model
 
     public function onModelCreated(): void
     {
-        $meta = ['reference_type' => Debt::class, 'reference_id' => $this->id];
+        $meta = ['reference_type' => Debt::class, 'reference_id' => $this->id, 'account_id' => $this->account_id];
         $method = match ($this->type) {
             DebtTypeEnum::RECEIVABLE->value => 'withdraw',
             DebtTypeEnum::PAYABLE->value => 'deposit',
