@@ -18,8 +18,11 @@ use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ColorColumn;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class BudgetResource extends Resource
@@ -123,21 +126,25 @@ class BudgetResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ColorColumn::make('color')
+                ColorColumn::make('color')
                     ->label(__('budgets.fields.color'))
                     ->searchable(),
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('budgets.fields.name'))
                     ->sortable()
                     ->searchable(),
-                Tables\Columns\TextColumn::make('amount')
+                TextColumn::make('categories.name')
+                    ->label(__('budgets.fields.categories'))
+                    ->badge(),
+                TextColumn::make('amount')
                     ->label(__('budgets.fields.actual_amount'))
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('spend_amount')
+                TextColumn::make('spend_amount')
                     ->label(__('budgets.fields.spend_amount'))
                     ->numeric()
-                    ->sortable(),
+                    ->sortable()
+                    ->color(fn(?Model $record) => $record->spend_amount * -1 > $record->amount ? 'danger' : ''),
                 Tables\Columns\IconColumn::make('status')
                     ->label(__('budgets.fields.enabled'))
                     ->icon(fn (string $state): string => match ($state) {
