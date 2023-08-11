@@ -34,7 +34,8 @@ class TransactionChart extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-        $transactions = Transaction::whereBetween('happened_at', [now()->subDays(10)->startOfDay(), now()->endOfDay()])
+        $transactions = Transaction::tenant()
+            ->whereBetween('happened_at', [now()->subDays(10)->startOfDay(), now()->endOfDay()])
             ->get()
             ->groupBy([
                 function ($item) {
@@ -48,7 +49,8 @@ class TransactionChart extends ApexChartWidget
                 return $item->map(function ($item) {
                     return $item->sum('amount');
                 });
-            });
+            })->take(10);
+
         return [
             'chart' => [
                 'type' => 'bar',

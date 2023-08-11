@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Enums\TransactionTypeEnum;
 use App\Models\Category;
 use App\Models\Transaction;
 use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
@@ -22,7 +23,9 @@ class CategoryChart extends ApexChartWidget
      *
      * @var string|null
      */
-    protected static ?string $heading = 'CategoryChart';
+    protected static ?string $heading = 'Top Category Transactions';
+
+    protected static ?int $contentHeight = 300;
 
     /**
      * Chart options (series, labels, types, size, animations...)
@@ -32,14 +35,18 @@ class CategoryChart extends ApexChartWidget
      */
     protected function getOptions(): array
     {
-        $transactions = Transaction::with('category')->whereNotNull('category_id')->whereBetween('happened_at', [now()->subDays(10)->startOfDay(), now()->endOfDay()])
+        $transactions = Transaction::with('category')
+            ->whereNotNull('category_id')
+            ->tenant()
+            ->where('type', TransactionTypeEnum::WITHDRAW->value)
+            ->whereBetween('happened_at', [now()->subDays(10)->startOfDay(), now()->endOfDay()])
             ->get()
             ->groupBy(function ($item) {
                 return $item->category_id;
             })
             ->map(function ($item) {
-                return $item->sum('amount');
-            });
+                return $item->sum('amount') * -1;
+            })->sortDesc()->take(10);
 
         return [
             'chart' => [
