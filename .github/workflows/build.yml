@@ -28,4 +28,4 @@ jobs:
             ssh -o StrictHostKeyChecking=no -i private_key ${AWS_USERNAME}@${AWS_HOSTNAME} '
   
               cat shipu.txt
-          '
+            '
