@@ -23,7 +23,7 @@ class LatestTransaction extends TableWidget
             ->defaultSort('happened_at', 'desc')
             ->columns((new TransactionResource())->tableColumns())
             ->actions([
-                Action::make('open')
+                Action::make('view')
                     ->url(fn (Transaction $record): string => TransactionResource::getUrl('edit', ['record' => $record])),
             ]);
     }
