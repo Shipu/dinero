@@ -17,7 +17,9 @@ class DatabaseSeeder extends Seeder
             AccountSeeder::class,
             WalletSeeder::class,
             CategorySeeder::class,
+            TransactionSeeder::class,
             GoalSeeder::class,
+            DebtSeeder::class,
         ]);
     }
 }
