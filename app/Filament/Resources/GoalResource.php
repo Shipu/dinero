@@ -141,7 +141,7 @@ class GoalResource extends Resource
                     ->action(function (array $data) {
                         (new Pages\ListGoals())->makeGoalTransaction($data);
                     }),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
