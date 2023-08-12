@@ -26,7 +26,8 @@
         "leandrocfe/filament-apex-charts": "^3.0",
         "mallardduck/blade-lucide-icons": "^1.11",
         "rinvex/countries": "^9.0",
-        "shipu/watchable": "dev-master"
+        "shipu/watchable": "dev-master",
+        "symfony/polyfill-intl-icu": "^1.27"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
