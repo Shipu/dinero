@@ -71,6 +71,12 @@ class AdminPanelProvider extends PanelProvider
             ->tenant(model: Account::class, slugAttribute: 'id', ownershipRelationship: 'owner')
             ->tenantRegistration(RegisterAccount::class)
             ->tenantProfile(EditAccountProfile::class)
+            ->renderHook( 'panels::content.start', function () {
+                if(config('app.demo')) {
+                    return view('banner');
+                }
+                return null;
+            })
             ->databaseNotifications()
             ->databaseNotificationsPolling('30s');
     }
