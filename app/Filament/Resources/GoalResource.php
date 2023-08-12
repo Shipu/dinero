@@ -57,7 +57,7 @@ class GoalResource extends Resource
                             ->default(now()->addMonth()),
                         Select::make('currency_code')
                             ->label(__('goals.fields.currency_code'))
-                            ->options(config('utilities.currencies'))
+                            ->options(country_with_currency_and_symbol())
                             ->default('BDT'),
                         ColorPicker::make('color')
                             ->label(__('goals.fields.color'))
@@ -94,7 +94,7 @@ class GoalResource extends Resource
                     ->sortable(),
                 TextColumn::make('currency_code')
                     ->label(__('goals.fields.currency_code'))
-                    ->formatStateUsing(fn (string $state): string => config("utilities.currencies.{$state}"))
+                    ->formatStateUsing(fn (string $state): string => country_with_currency_and_symbol($state))
                     ->searchable(),
             ])
             ->filters([
