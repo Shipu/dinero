@@ -37,7 +37,7 @@ class ListGoals extends ListRecords
                 ->action(function (array $data) {
                     $this->makeGoalTransaction($data);
                 }),
-            Actions\CreateAction::make(),
+            Actions\CreateAction::make()->slideOver(),
         ];
     }
 

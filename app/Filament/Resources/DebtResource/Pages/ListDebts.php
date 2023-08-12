@@ -37,8 +37,8 @@ class ListDebts extends ListRecords
                 ->form($this->getDebtTransactionFields())
                 ->action(function (array $data) {
                     $this->makeDebtTransaction($data);
-                }),
-            Actions\CreateAction::make(),
+                })->slideOver(),
+            Actions\CreateAction::make()->slideOver(),
         ];
     }
 

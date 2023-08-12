@@ -140,7 +140,7 @@ class DebtResource extends Resource
                 ]),
             ])
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->slideOver(),
             ]);
     }
     
@@ -155,8 +155,8 @@ class DebtResource extends Resource
     {
         return [
             'index' => Pages\ListDebts::route('/'),
-            'create' => Pages\CreateDebt::route('/create'),
-            'edit' => Pages\EditDebt::route('/{record}/edit'),
+//            'create' => Pages\CreateDebt::route('/create'),
+//            'edit' => Pages\EditDebt::route('/{record}/edit'),
         ];
     }    
 }

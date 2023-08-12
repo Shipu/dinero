@@ -161,7 +161,7 @@ class WalletResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                 ]),
             ])->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->slideOver(),
             ]);
     }
     
@@ -176,8 +176,8 @@ class WalletResource extends Resource
     {
         return [
             'index' => Pages\ListWallets::route('/'),
-            'create' => Pages\CreateWallet::route('/create'),
-            'edit' => Pages\EditWallet::route('/{record}/edit'),
+//            'create' => Pages\CreateWallet::route('/create'),
+//            'edit' => Pages\EditWallet::route('/{record}/edit'),
         ];
     }
 }

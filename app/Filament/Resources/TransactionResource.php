@@ -289,7 +289,7 @@ class TransactionResource extends Resource
             ])
             ->defaultSort('happened_at', 'desc')
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->slideOver(),
             ]);
     }
 
