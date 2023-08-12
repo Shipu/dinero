@@ -36,9 +36,15 @@ class WalletResource extends Resource
                         TextInput::make('name')
                             ->label(__('wallets.fields.name'))
                             ->required()
-                            ->autofocus(),
+                            ->autofocus()
+                            ->columnSpan([
+                                'sm' => 1,
+                            ]),
                         Select::make('type')
                             ->label(__('wallets.fields.type'))
+                            ->columnSpan([
+                                'sm' => 1,
+                            ])
                             ->searchable()
                             ->required()
                             ->options(__('wallets.types'))
@@ -51,16 +57,17 @@ class WalletResource extends Resource
                             ->numeric()
                             ->inputMode('decimal')
                             ->default(0)
-                            ->columnSpan(2)
                             ->disabled()
                             ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::GENERAL->value && $operation !== 'create'),
                         TextInput::make('meta.initial_balance')
                             ->label(__('wallets.fields.initial_balance'))
                             ->required()
                             ->numeric()
+                            ->columnSpan([
+                                'sm' => 2,
+                            ])
                             ->inputMode('decimal')
                             ->default(0)
-                            ->columnSpan(2)
                             ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::GENERAL->value && $operation == 'create'),
                         TextInput::make('meta.credit')
                             ->label(__('wallets.fields.credit_limit'))
@@ -81,15 +88,23 @@ class WalletResource extends Resource
                             ->label(__('wallets.fields.currency_code'))
                             ->required()
                             ->searchable()
+                            ->columnSpan([
+                                'sm' => 1,
+                            ])
                             ->options(country_with_currency_and_symbol())
                             ->default('BDT'),
                         ColorPicker::make('color')
                             ->label(__('wallets.fields.color'))
                             ->required()
+                            ->columnSpan([
+                                'sm' => 1,
+                            ])
                             ->default('#22b3e0'),
                         IconPicker::make('icon')
                             ->label(__('wallets.fields.icon'))
-                            ->columnSpan(2)
+                            ->columnSpan([
+                                'sm' => 2,
+                            ])
                             ->columns([
                                 'default' => 1,
                                 'lg' => 3,
@@ -110,7 +125,7 @@ class WalletResource extends Resource
                             ->helperText(__('wallets.fields.exclude.help_text'))
                             ->default(false)
                             ->visible(fn (Get $get): bool => $get('type') === WalletTypeEnum::GENERAL->value),
-                    ])->columns(2),
+                    ])->columns(),
             ]);
     }
 
