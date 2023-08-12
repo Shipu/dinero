@@ -9,6 +9,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "ext-intl": "*",
         "akaunting/laravel-money": "^5.1",
         "awcodes/filament-badgeable-column": "^2.0",
         "bavix/laravel-wallet": "^10.0",
@@ -25,8 +26,10 @@
         "laravel/tinker": "^2.8",
         "leandrocfe/filament-apex-charts": "^3.0",
         "mallardduck/blade-lucide-icons": "^1.11",
+        "nativephp/electron": "^0.4.0",
         "rinvex/countries": "^9.0",
-        "shipu/watchable": "dev-master"
+        "shipu/watchable": "dev-master",
+        "symfony/polyfill-intl-icu": "^1.27"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.8",
