@@ -143,7 +143,7 @@ class CategoryResource extends Resource
             ->deferLoading()
             ->striped()
             ->emptyStateActions([
-                Tables\Actions\CreateAction::make(),
+                Tables\Actions\CreateAction::make()->slideOver(),
             ]);
     }
     
@@ -158,8 +158,8 @@ class CategoryResource extends Resource
     {
         return [
             'index' => Pages\ListCategories::route('/'),
-            'create' => Pages\CreateCategory::route('/create'),
-            'edit' => Pages\EditCategory::route('/{record}/edit'),
+//            'create' => Pages\CreateCategory::route('/create'),
+//            'edit' => Pages\EditCategory::route('/{record}/edit'),
         ];
     }    
     
