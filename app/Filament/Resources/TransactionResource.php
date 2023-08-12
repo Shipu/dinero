@@ -41,6 +41,11 @@ class TransactionResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Section::make()
+                    ->columns([
+                        'sm' => 2,
+                    ])->columnSpan([
+                        'sm' => 2
+                    ])
                     ->schema([
                         Radio::make('type')
                             ->default(TransactionTypeEnum::WITHDRAW->value)
@@ -97,14 +102,7 @@ class TransactionResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpan(function (?Model $record): int {
-                                if(!blank($record)) {
-                                    if($record->isTransferTransaction || $record->isPaymentTransaction || blank($record->category_id)) {
-                                        return 2;
-                                    }
-                                }
-                                return 1;
-                            })
+                            ->columnSpan(2)
                             ->disabled(function (?Model $record): bool {
                                 if(!blank($record)) {
                                     if($record->isTransferTransaction || $record->isPaymentTransaction) {
@@ -125,6 +123,7 @@ class TransactionResource extends Resource
                             }),
                         Select::make('category_id')
                             ->label(__('transactions.fields.category'))
+                            ->columnSpan(2)
                             ->relationship('category', 'name', function(Builder $query, Get $get){
                                 $spendType = match ($get('type')) {
                                     TransactionTypeEnum::WITHDRAW->value => SpendTypeEnum::EXPENSE->value,
@@ -192,15 +191,11 @@ class TransactionResource extends Resource
                                 }
                                 return in_array($get('type'), [TransactionTypeEnum::TRANSFER->value, TransactionTypeEnum::PAYMENT->value]) && !blank($get('from_wallet_id'));
                             }),
-                        Toggle::make('confirmed')
-                            ->label(__('transactions.fields.confirmed'))
-                            ->default(true)
-                            ->visible(fn (Get $get): bool => in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value])),
+//                        Toggle::make('confirmed')
+//                            ->label(__('transactions.fields.confirmed'))
+//                            ->default(true)
+//                            ->visible(fn (Get $get): bool => in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value])),
 
-                    ])->columns([
-                        'sm' => 2,
-                    ])->columnSpan([
-                        'sm' => 2
                     ]),
                 Forms\Components\Card::make()
                     ->columnSpan(['lg' => 1])
