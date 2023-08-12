@@ -20,6 +20,12 @@ Dinero is a multi account money tracker. It is a simple application that allows 
     - Email: `demo@dinero.app`
     - Password: `12345678`
 
+## NativePHP
+for the NativePHP version, please check the [nativephp branch](https://github.com/shipu/dinero/tree/native-php)
+```ssh
+git checkout native-php
+```
+
 ## Screenshots
 ![Dashboard](screenshots/dinero-dashboard.png)
 ![Wallets](screenshots/dinero-wallets.png)
