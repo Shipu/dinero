@@ -81,7 +81,7 @@ class WalletResource extends Resource
                             ->label(__('wallets.fields.currency_code'))
                             ->required()
                             ->searchable()
-                            ->options(config('utilities.currencies'))
+                            ->options(country_with_currency_and_symbol())
                             ->default('BDT'),
                         ColorPicker::make('color')
                             ->label(__('wallets.fields.color'))
@@ -97,12 +97,12 @@ class WalletResource extends Resource
                             ]),
                         Select::make('statement_day_of_month')
                             ->label(__('wallets.fields.statement_day_of_month'))
-                            ->options(config('utilities.month_ordinal_numbers'))
+                            ->options(month_ordinal_numbers())
                             ->required()
                             ->visible(fn (Get $get): bool => $get('type') === WalletTypeEnum::CREDIT_CARD->value),
                         Select::make('payment_due_day_of_month')
                             ->label(__('wallets.fields.payment_due_day_of_month'))
-                            ->options(config('utilities.month_ordinal_numbers'))
+                            ->options(month_ordinal_numbers())
                             ->required()
                             ->visible(fn (Get $get): bool => $get('type') === WalletTypeEnum::CREDIT_CARD->value),
                         Forms\Components\Toggle::make('exclude')
@@ -141,7 +141,7 @@ class WalletResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency_code')
                     ->label(__('wallets.fields.currency_code'))
-                    ->formatStateUsing(fn (string $state): string => config("utilities.currencies.{$state}"))
+                    ->formatStateUsing(fn (string $state): string => country_with_currency_and_symbol($state))
                     ->sortable(),
 
             ])

@@ -91,10 +91,10 @@ class BudgetResource extends Resource
                                     ->visible(fn (Get $get) => $get('period') === BudgetPeriodEnum::WEEKLY->value),
                                 Select::make('day_of_month')
                                     ->label(__('budgets.fields.day_of_month'))
-                                    ->options(config('utilities.month_ordinal_numbers'))
+                                    ->options(month_ordinal_numbers())
                                     ->searchable()
                                     ->preload()
-                                    ->placeholder(config('utilities.month_ordinal_numbers')->first())
+                                    ->placeholder(month_ordinal_numbers()->first())
                                     ->visible(fn (Get $get) => in_array($get('period'), BudgetPeriodEnum::toArrayExcept([BudgetPeriodEnum::WEEKLY->value]))),
                                 Select::make('month_of_quarter')
                                     ->label(__('budgets.fields.month_of_quarter'))

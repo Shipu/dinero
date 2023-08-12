@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Dashboard;
 use App\Filament\Pages\Tenancy\EditAccountProfile;
 use App\Filament\Pages\Tenancy\RegisterAccount;
@@ -29,7 +30,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('hub')
-            ->login()
+            ->login(Login::class)
             ->colors([
                 'primary' => Color::Sky,
             ])
@@ -59,10 +60,6 @@ class AdminPanelProvider extends PanelProvider
             ->authMiddleware([
                 Authenticate::class,
             ])
-            ->login()
-            ->registration()
-            ->passwordReset()
-            ->emailVerification()
             ->profile()
             ->sidebarCollapsibleOnDesktop()
             ->plugin(
