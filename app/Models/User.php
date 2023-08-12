@@ -8,6 +8,7 @@ use Bavix\Wallet\Interfaces\WalletFloat;
 use Bavix\Wallet\Traits\HasWallet;
 use Bavix\Wallet\Traits\HasWalletFloat;
 use Bavix\Wallet\Traits\HasWallets;
+use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasDefaultTenant;
 use Filament\Models\Contracts\HasTenants;
@@ -24,7 +25,7 @@ use Illuminate\Support\Collection;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable implements HasAvatar, HasTenants, HasDefaultTenant, WalletContract, WalletFloat
+class User extends Authenticatable implements HasAvatar, HasTenants, HasDefaultTenant, WalletContract, WalletFloat, FilamentUser
 {
     use HasWallet, HasWalletFloat, HasWallets, HasApiTokens, HasFactory, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
 
@@ -94,5 +95,10 @@ class User extends Authenticatable implements HasAvatar, HasTenants, HasDefaultT
     public function latestAccount(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'latest_account_id');
+    }
+
+    public function canAccessPanel(Panel $panel): bool
+    {
+        return true;
     }
 }
