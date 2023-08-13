@@ -3,7 +3,7 @@ name: deploy
 on:
   push:
     branches:
-      - master
+      - mydinero
   workflow_dispatch:  
 
 jobs:
