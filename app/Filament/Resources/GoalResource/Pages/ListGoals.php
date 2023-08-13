@@ -51,13 +51,13 @@ class ListGoals extends ListRecords
                 ->visible(fn() => !is_null($goalId)),
             Select::make('goal_id')
                 ->label(__('goals.fields.goal'))
-                ->options(Goal::all()->pluck('name', 'id')->toArray())
+                ->options(Goal::tenant()->pluck('name', 'id')->toArray())
                 ->visible(fn() => is_null($goalId))
                 ->searchable()
                 ->required(),
             Select::make('wallet_id')
                 ->label(__('goals.fields.from_wallet'))
-                ->options(Wallet::all()->pluck('name', 'id')->toArray())
+                ->options(Wallet::tenant()->pluck('name', 'id')->toArray())
                 ->searchable()
                 ->required(),
             TextInput::make('amount')
@@ -77,7 +77,7 @@ class ListGoals extends ListRecords
                 $method = 'deposit';
             }
 
-            $wallet->{$method}($amount, [
+            $wallet->{$method}($amount * 100, [
                 'reference_type' => Goal::class,
                 'reference_id' => $data['goal_id'],
             ]);

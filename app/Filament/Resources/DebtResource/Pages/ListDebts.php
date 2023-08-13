@@ -67,7 +67,7 @@ class ListDebts extends ListRecords
                 ->visible(fn() => !is_null($debtId)),
             Select::make('debt_id')
                 ->label(__('debts.fields.debt'))
-                ->options(Debt::all()->pluck('name', 'id')->toArray())
+                ->options(Debt::tenant()->pluck('name', 'id')->toArray())
                 ->visible(fn() => is_null($debtId))
                 ->searchable()
                 ->live()
@@ -88,7 +88,7 @@ class ListDebts extends ListRecords
                 ->required(),
             Select::make('wallet_id')
                 ->label(__('debts.fields.wallet'))
-                ->options(Wallet::all()->pluck('name', 'id')->toArray())
+                ->options(Wallet::tenant()->pluck('name', 'id')->toArray())
                 ->searchable()
                 ->required()
                 ->visible(fn(Get $get) => !in_array($get('action_type'), [DebtActionTypeEnum::LOAN_INTEREST->value, DebtActionTypeEnum::DEBT_INTEREST->value])),
@@ -121,7 +121,7 @@ class ListDebts extends ListRecords
 
             if(!blank($method)) {
                 $wallet = Wallet::findOrFail($data['wallet_id']);
-                $wallet->{$method}($amount, [
+                $wallet->{$method}($amount * 100, [
                     'happened_at' => $happenedAt,
                     'reference_type' => Debt::class,
                     'reference_id' => $data['debt_id'],

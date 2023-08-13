@@ -21,6 +21,8 @@ class CreateTransaction extends CreateRecord
      */
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['amount'] *= 100;
+
         $type = ($data['type'] ?? null);
         if($type == TransactionTypeEnum::WITHDRAW->value) {
             $data['amount'] = $data['amount'] * -1;
@@ -49,6 +51,9 @@ class CreateTransaction extends CreateRecord
     {
         $wallet = Wallet::findOrFail($data['wallet_id']);
         $amount = (double) $wallet->balance + ($data['amount']);
+
+        $amount = $amount / 100; // cents to dollars
+
         if($wallet->type == WalletTypeEnum::CREDIT_CARD->value) {
             $creditLimit = -1 * (double) array_get($wallet->meta, 'credit');
             if($amount < $creditLimit) {

@@ -90,6 +90,12 @@ class TransactionResource extends Resource
                                 return false;
                             })
                             ->autofocus()
+                            ->formatStateUsing(function ($state, ?Model $record): string|null {
+                                if(!blank($record)) {
+                                    return $record->amount_float;
+                                }
+                                return $state;
+                            })
                             ->columnSpan(2)
                             ->numeric(),
                         Textarea::make('description')
@@ -228,7 +234,7 @@ class TransactionResource extends Resource
                 ->formatStateUsing(fn (string $state): string => __("transactions.types.{$state}.label"))
                 ->label(__('transactions.fields.type'))
                 ->searchable(),
-            Tables\Columns\TextColumn::make('amount')
+            Tables\Columns\TextColumn::make('amount_float')
                 ->label(__('transactions.fields.amount'))
                 ->numeric()
                 ->sortable(),

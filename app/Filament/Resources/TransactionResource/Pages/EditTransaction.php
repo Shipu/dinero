@@ -18,4 +18,11 @@ class EditTransaction extends EditRecord
             Actions\RestoreAction::make(),
         ];
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['amount'] *= 100;
+
+        return $data;
+    }
 }
