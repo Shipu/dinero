@@ -138,10 +138,7 @@ class TransactionResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->visible(function (Get $get, ?Model $record): bool {
-                                if(!blank($record)) {
-                                    return !blank($record->category_id);
-                                }
+                            ->visible(function (Get $get): bool {
                                 return in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value]);
                             }),
                         Select::make('from_wallet_id')
