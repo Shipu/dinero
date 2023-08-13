@@ -153,7 +153,7 @@ class WalletResource extends Resource
                     })
                     ->formatStateUsing(fn (string $state): string => __("wallets.types.{$state}"))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('balance')
+                Tables\Columns\TextColumn::make('balance_float')
                     ->label(__('wallets.fields.balance'))
                     ->weight('bold')
                     ->sortable(),

@@ -36,7 +36,7 @@ class Goal extends Model
     {
         return Attribute::make(
             get: function() {
-                return $this->transactions->sum('amount') * -1;
+                return $this->transactions->sum('amount_float') * -1;
             }
         );
     }

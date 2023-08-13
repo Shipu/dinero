@@ -103,7 +103,7 @@ class Debt extends Model
         };
 
         if(!blank($method)) {
-            $this->wallet->{$method}($this->amount, $meta);
+            $this->wallet->{$method}($this->amount * 100, $meta);
         }
     }
 
@@ -121,7 +121,7 @@ class Debt extends Model
         }
 
         if(!blank($method)) {
-            $this->wallet->{$method}($delta, $meta);
+            $this->wallet->{$method}($delta * 100, $meta);
         }
     }
 }
