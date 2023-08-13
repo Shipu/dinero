@@ -30,7 +30,11 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('hub')
-            ->login(Login::class)
+            ->path('hub')
+            ->login()
+            ->registration()
+            ->passwordReset()
+            ->emailVerification()
             ->colors([
                 'primary' => Color::Sky,
             ])
