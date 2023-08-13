@@ -11,7 +11,6 @@ use App\Models\Transaction;
 use Filament\Forms;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -193,12 +192,14 @@ class TransactionResource extends Resource
                             ->visible(fn (Get $get): bool => in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value])),
 
                     ]),
-                Forms\Components\Card::make()
+                Forms\Components\Section::make()
                     ->columnSpan(['lg' => 1])
                     ->schema([
                         TextInput::make('meta.memo.note')
+                            ->label(__('transactions.fields.note'))
                             ->columnSpan(2),
                         FileUpload::make('meta.memo.attachment')
+                            ->label(__('transactions.fields.attachment'))
                             ->columnSpan(2),
                     ]),
             ])->columns([
