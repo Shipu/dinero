@@ -138,7 +138,6 @@ class TransactionResource extends Resource
                             })
                             ->searchable()
                             ->preload()
-                            ->required()
                             ->visible(function (Get $get, ?Model $record): bool {
                                 if(!blank($record)) {
                                     return !blank($record->category_id);
