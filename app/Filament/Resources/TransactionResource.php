@@ -190,10 +190,10 @@ class TransactionResource extends Resource
                                 }
                                 return in_array($get('type'), [TransactionTypeEnum::TRANSFER->value, TransactionTypeEnum::PAYMENT->value]) && !blank($get('from_wallet_id'));
                             }),
-//                        Toggle::make('confirmed')
-//                            ->label(__('transactions.fields.confirmed'))
-//                            ->default(true)
-//                            ->visible(fn (Get $get): bool => in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value])),
+                        Toggle::make('confirmed')
+                            ->label(__('transactions.fields.confirmed'))
+                            ->default(true)
+                            ->visible(fn (Get $get): bool => in_array($get('type'), [TransactionTypeEnum::DEPOSIT->value, TransactionTypeEnum::WITHDRAW->value])),
 
                     ]),
                 Forms\Components\Card::make()
