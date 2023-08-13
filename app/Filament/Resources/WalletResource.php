@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Enums\WalletTypeEnum;
 use App\Filament\Resources\WalletResource\Pages;
 use App\Filament\Resources\WalletResource\RelationManagers;
+use App\Models\Goal;
 use App\Models\Wallet;
 use Filament\Forms;
 use Filament\Forms\Components\ColorPicker;
@@ -12,9 +13,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use Illuminate\Database\Eloquent\Model;
@@ -169,6 +172,19 @@ class WalletResource extends Resource
                     ->searchable(),
             ])
             ->actions([
+                Action::make('refresh_balance')
+                    ->label(__('wallets.actions.refresh_balance'))
+                    ->icon('lucide-refresh-cw')
+                    ->color('warning')
+                    ->action(function (Wallet $wallet) {
+                        $wallet->refreshBalance();
+                        Notification::make()
+                            ->title("{$wallet->name} Wallet")
+                            ->body(__('wallets.notifications.balance_refreshed'))
+                            ->icon('lucide-refresh-cw')
+                            ->color('success')
+                            ->send();
+                    }),
                 Tables\Actions\EditAction::make()->slideOver(),
             ])
             ->bulkActions([
