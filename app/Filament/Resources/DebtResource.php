@@ -132,7 +132,7 @@ class DebtResource extends Resource
                         (new Pages\ListDebts())->makeDebtTransaction($data);
                     })
                     ->visible(fn(Debt $debt) => $debt->progress < 100),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()->slideOver(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

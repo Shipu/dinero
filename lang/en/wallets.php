@@ -5,6 +5,12 @@ use App\Enums\WalletTypeEnum;
 return [
     'title' => 'Wallets',
     'title_singular' => 'Wallet',
+    'actions' => [
+        'refresh_balance' => 'Refresh Balance',
+    ],
+    'notifications' => [
+        'balance_refreshed' => 'Balance Refreshed',
+    ],
     'fields' => [
         'name' => 'Name',
         'type' => 'Type',
