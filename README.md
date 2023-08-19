@@ -27,7 +27,7 @@ git checkout native-php
 ```
 
 ## Demo
-Url: [http://dinero.bridgex.live](https://dinero.app)
+Url: [http://dinero.bridgex.live](http://dinero.bridgex.live)
 
 ## Screenshots
 ![Dashboard](screenshots/dinero-dashboard.png)
