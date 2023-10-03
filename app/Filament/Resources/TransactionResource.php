@@ -136,7 +136,7 @@ class TransactionResource extends Resource
                                     default => null,
                                 };
                                 if(!is_null($spendType)) {
-                                    return $query->where('type', $spendType);
+                                    return $query->tenant()->where('type', $spendType);
                                 }
 
                                 return $query;
