@@ -30,3 +30,10 @@ function month_ordinal_numbers(): Collection
         default => 'th'
     }));
 }
+
+
+function curency_money_format(float $amount, string $currency): string
+{
+    
+    return $currency. ' ' .number_format($amount, 2);
+}

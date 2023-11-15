@@ -153,13 +153,15 @@ class WalletResource extends Resource
                     })
                     ->formatStateUsing(fn (string $state): string => __("wallets.types.{$state}"))
                     ->sortable(),
-                Tables\Columns\TextColumn::make('balance_float')
-                    ->label(__('wallets.fields.balance'))
-                    ->weight('bold')
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('currency_code')
                     ->label(__('wallets.fields.currency_code'))
                     ->formatStateUsing(fn (string $state): string => country_with_currency_and_symbol($state))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('balance')
+                    ->label(__('wallets.fields.balance'))
+                    ->alignRight()
+                    ->formatStateUsing(fn (float $state, Model $record): string => curency_money_format($state, $record?->currency_code))
+                    ->weight('bold')
                     ->sortable(),
 
             ])
