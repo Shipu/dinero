@@ -24,6 +24,7 @@ return [
         'payment_due_day_of_month' => 'Payment Due Day of Month',
         'icon' => 'Icon',
         'color' => 'Color',
+        'wallet_document' => 'Wallet Document',
         'exclude' => [
             'title' => 'Exclude',
             'help_text' => 'Ignore this balance of this wallet on the total balance',
@@ -32,5 +33,15 @@ return [
     'types' => [
         WalletTypeEnum::GENERAL->value => 'General',
         WalletTypeEnum::CREDIT_CARD->value => 'Credit Card',
+        WalletTypeEnum::BANK_ACCOUNT->value => 'Bank Account',
+        WalletTypeEnum::MOBILE_BANKING_ACCOUNT->value => 'Mobile Banking Account',
+        WalletTypeEnum::FREELANCER_ACCOUNT->value => 'Freelancer Account',
+        WalletTypeEnum::SAVING_ACCOUNT->value => 'Saving Account',
+        WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value => 'Mudaraba Scheme Account',
+        WalletTypeEnum::CASH->value => 'Cash',
+        WalletTypeEnum::INVESTMENT->value => 'Investment',
+        WalletTypeEnum::LOAN->value => 'Loan',
+        WalletTypeEnum::OTHER->value => 'Other',
+        
     ]
 ];

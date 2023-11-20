@@ -16,6 +16,7 @@
         "cviebrock/eloquent-sluggable": "^10.0",
         "filament/filament": "^3.0",
         "filament/notifications": "^3.0",
+        "filament/spatie-laravel-media-library-plugin": "^3.0-stable",
         "guava/filament-icon-picker": "^2.0",
         "guzzlehttp/guzzle": "^7.2",
         "jeffgreco13/filament-breezy": "^v2.1.1",

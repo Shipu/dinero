@@ -2,25 +2,26 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\WalletTypeEnum;
-use App\Filament\Resources\WalletResource\Pages;
-use App\Filament\Resources\WalletResource\RelationManagers;
-use App\Models\Goal;
-use App\Models\Wallet;
 use Filament\Forms;
-use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use App\Models\Goal;
+use Filament\Tables;
+use App\Models\Wallet;
 use Filament\Forms\Get;
-use Filament\Notifications\Notification;
+use Filament\Forms\Form;
+use Filament\Tables\Table;
+use App\Enums\WalletTypeEnum;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
-use Filament\Tables;
 use Filament\Tables\Actions\Action;
-use Filament\Tables\Table;
-use Guava\FilamentIconPicker\Forms\IconPicker;
+use Filament\Forms\Components\Select;
 use Illuminate\Database\Eloquent\Model;
+use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Notification;
+use Filament\Forms\Components\ColorPicker;
+use Guava\FilamentIconPicker\Forms\IconPicker;
+use App\Filament\Resources\WalletResource\Pages;
+use App\Filament\Resources\WalletResource\RelationManagers;
+use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class WalletResource extends Resource
 {
@@ -53,7 +54,8 @@ class WalletResource extends Resource
                             ->options(__('wallets.types'))
                             ->default(WalletTypeEnum::GENERAL->value)
                             ->live()
-                            ->disabled(fn (string $operation): bool => $operation !== 'create'),
+                            // ->disabled(fn (string $operation): bool => $operation !== 'create')
+                            ,
                         TextInput::make('balance')
                             ->label(fn(string $operation): string => $operation == 'create' ? __('wallets.fields.initial_balance') : __('wallets.fields.balance'))
                             ->required()
@@ -61,7 +63,7 @@ class WalletResource extends Resource
                             ->inputMode('decimal')
                             ->default(0)
                             ->disabled()
-                            ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::GENERAL->value && $operation !== 'create'),
+                            ->visible(fn (Get $get, string $operation): bool => $get('type') != WalletTypeEnum::CREDIT_CARD->value && $operation !== 'create'),
                         TextInput::make('meta.initial_balance')
                             ->label(__('wallets.fields.initial_balance'))
                             ->required()
@@ -127,7 +129,14 @@ class WalletResource extends Resource
                             ->label(__('wallets.fields.exclude.title'))
                             ->helperText(__('wallets.fields.exclude.help_text'))
                             ->default(false)
-                            ->visible(fn (Get $get): bool => $get('type') === WalletTypeEnum::GENERAL->value),
+                            ->visible(fn (Get $get): bool => $get('type') !== WalletTypeEnum::CREDIT_CARD->value),
+                        SpatieMediaLibraryFileUpload::make('wallet_document')
+                            ->label(__('wallets.fields.wallet_document'))
+                            ->maxFiles(5)
+                            ->acceptedFileTypes(['image/*', 'application/pdf'])
+                            ->columnSpan([
+                                'sm' => 2,
+                            ])
                     ])->columns(),
             ]);
     }
@@ -149,6 +158,16 @@ class WalletResource extends Resource
                         return match ($state) {
                             WalletTypeEnum::CREDIT_CARD->value => 'danger',
                             WalletTypeEnum::GENERAL->value => 'success',
+                            WalletTypeEnum::BANK_ACCOUNT->value => 'primary',
+                            WalletTypeEnum::MOBILE_BANKING_ACCOUNT->value => 'primary',
+                            WalletTypeEnum::FREELANCER_ACCOUNT->value => 'primary',
+                            WalletTypeEnum::SAVING_ACCOUNT->value => 'primary',
+                            WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value => 'primary',
+                            WalletTypeEnum::CASH->value => 'primary',
+                            WalletTypeEnum::INVESTMENT->value => 'primary',
+                            WalletTypeEnum::LOAN->value => 'primary',
+                            WalletTypeEnum::OTHER->value => 'primary',
+                            default => 'primary',
                         };
                     })
                     ->formatStateUsing(fn (string $state): string => __("wallets.types.{$state}"))

@@ -2,18 +2,23 @@
 
 namespace App\Models;
 
+use App\Models\Account;
 use App\Enums\WalletTypeEnum;
-use Bavix\Wallet\Models\Wallet as BaseWallet;
 use Filament\Facades\Filament;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Shipu\Watchable\Traits\WatchableTrait;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Bavix\Wallet\Models\Wallet as BaseWallet;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Wallet extends BaseWallet
+class Wallet extends BaseWallet implements HasMedia
 {
-    use HasFactory, WatchableTrait, SoftDeletes;
+    use HasFactory, WatchableTrait, SoftDeletes, InteractsWithMedia;
 
     protected $fillable = [
         'holder_type',
@@ -71,5 +76,13 @@ class Wallet extends BaseWallet
         } elseif($amount > 0) {
             $this->deposit($amount, ['description' => 'Initial balance']);
         }
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->fit(Manipulations::FIT_CROP, 300, 300)
+            ->nonQueued();
     }
 }
