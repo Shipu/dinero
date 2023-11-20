@@ -26,7 +26,8 @@ return [
         'color' => 'Color',
         'wallet_document' => 'Wallet Document',
         'start_date' => 'Start Date',
-        'return_period_of_month' => 'Return Period of Month',
+        'aprox_roi' => 'Aprox. ROI',
+        'return_period_of_month' => 'Return Period',
         'exclude' => [
             'title' => 'Exclude',
             'help_text' => 'Ignore this balance of this wallet on the total balance',

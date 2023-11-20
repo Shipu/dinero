@@ -75,7 +75,7 @@ class WalletResource extends Resource
                             ->inputMode('decimal')
                             ->default(0)
                             ->visible(fn (Get $get, string $operation): bool => $get('type') != WalletTypeEnum::CREDIT_CARD->value && $operation == 'create'),
-                        DatePicker::make('meta.start_date')
+                        DatePicker::make('start_date')
                             ->label(__('wallets.fields.start_date'))
                             ->displayFormat('Y-m-d')
                             ->format('Y-m-d')
@@ -85,7 +85,7 @@ class WalletResource extends Resource
                             ])
                             ->default(date('Y-m-d'))
                             ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value),
-                            TextInput::make('meta.return_period_of_month')
+                        TextInput::make('return_period_of_month')
                             ->label(__('wallets.fields.return_period_of_month'))
                             ->required()
                             ->columnSpan([
@@ -93,6 +93,15 @@ class WalletResource extends Resource
                             ])
                             ->numeric()
                             ->default(3)
+                            ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value),
+                        TextInput::make('aprox_roi')
+                            ->label(__('wallets.fields.aprox_roi'))
+                            ->required()
+                            ->numeric()
+                            ->columnSpan([
+                                'sm' => 2,
+                            ])
+                            ->default(0)
                             ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value),
                         TextInput::make('meta.credit')
                             ->label(__('wallets.fields.credit_limit'))
@@ -195,6 +204,7 @@ class WalletResource extends Resource
                 Tables\Columns\TextColumn::make('currency_code')
                     ->label(__('wallets.fields.currency_code'))
                     ->formatStateUsing(fn (string $state): string => country_with_currency_and_symbol($state))
+                    ->toggleable(isToggledHiddenByDefault: true)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('balance')
                     ->label(__('wallets.fields.balance'))
