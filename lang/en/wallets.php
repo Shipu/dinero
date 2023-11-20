@@ -25,6 +25,8 @@ return [
         'icon' => 'Icon',
         'color' => 'Color',
         'wallet_document' => 'Wallet Document',
+        'start_date' => 'Start Date',
+        'return_period_of_month' => 'Return Period of Month',
         'exclude' => [
             'title' => 'Exclude',
             'help_text' => 'Ignore this balance of this wallet on the total balance',
@@ -35,6 +37,7 @@ return [
         WalletTypeEnum::CREDIT_CARD->value => 'Credit Card',
         WalletTypeEnum::BANK_ACCOUNT->value => 'Bank Account',
         WalletTypeEnum::MOBILE_BANKING_ACCOUNT->value => 'Mobile Banking Account',
+        WalletTypeEnum::DIGITAL_WALLET->value => 'Digital Wallet',
         WalletTypeEnum::FREELANCER_ACCOUNT->value => 'Freelancer Account',
         WalletTypeEnum::SAVING_ACCOUNT->value => 'Saving Account',
         WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value => 'Mudaraba Scheme Account',

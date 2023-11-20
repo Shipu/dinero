@@ -35,6 +35,8 @@ class Wallet extends BaseWallet implements HasMedia
         'icon',
         'color',
         'exclude',
+        'start_date',
+        'return_period_of_month',
         'statement_day_of_month',
         'payment_due_day_of_month',
         'credit_limit',

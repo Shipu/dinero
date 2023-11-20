@@ -21,6 +21,7 @@ use Filament\Forms\Components\ColorPicker;
 use Guava\FilamentIconPicker\Forms\IconPicker;
 use App\Filament\Resources\WalletResource\Pages;
 use App\Filament\Resources\WalletResource\RelationManagers;
+use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
 
 class WalletResource extends Resource
@@ -54,7 +55,7 @@ class WalletResource extends Resource
                             ->options(__('wallets.types'))
                             ->default(WalletTypeEnum::GENERAL->value)
                             ->live()
-                            // ->disabled(fn (string $operation): bool => $operation !== 'create')
+                            ->disabled(fn (string $operation): bool => $operation !== 'create')
                             ,
                         TextInput::make('balance')
                             ->label(fn(string $operation): string => $operation == 'create' ? __('wallets.fields.initial_balance') : __('wallets.fields.balance'))
@@ -73,7 +74,26 @@ class WalletResource extends Resource
                             ])
                             ->inputMode('decimal')
                             ->default(0)
-                            ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::GENERAL->value && $operation == 'create'),
+                            ->visible(fn (Get $get, string $operation): bool => $get('type') != WalletTypeEnum::CREDIT_CARD->value && $operation == 'create'),
+                        DatePicker::make('meta.start_date')
+                            ->label(__('wallets.fields.start_date'))
+                            ->displayFormat('Y-m-d')
+                            ->format('Y-m-d')
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                            ])
+                            ->default(date('Y-m-d'))
+                            ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value),
+                            TextInput::make('meta.return_period_of_month')
+                            ->label(__('wallets.fields.return_period_of_month'))
+                            ->required()
+                            ->columnSpan([
+                                'sm' => 2,
+                            ])
+                            ->numeric()
+                            ->default(3)
+                            ->visible(fn (Get $get, string $operation): bool => $get('type') == WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value),
                         TextInput::make('meta.credit')
                             ->label(__('wallets.fields.credit_limit'))
                             ->required()
@@ -181,6 +201,12 @@ class WalletResource extends Resource
                     ->alignRight()
                     ->formatStateUsing(fn (float $state, Model $record): string => curency_money_format($state, $record?->currency_code))
                     ->weight('bold')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('start_date')
+                    ->label(__('wallets.fields.start_date'))
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('return_period_of_month')
+                    ->label(__('wallets.fields.return_period_of_month'))
                     ->sortable(),
 
             ])
