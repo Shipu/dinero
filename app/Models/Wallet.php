@@ -12,6 +12,7 @@ use Shipu\Watchable\Traits\WatchableTrait;
 use Spatie\MediaLibrary\InteractsWithMedia;
 use Bavix\Wallet\Models\Wallet as BaseWallet;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
@@ -55,6 +56,38 @@ class Wallet extends BaseWallet implements HasMedia
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id');
+    }
+
+    public function measures(): HasMany
+    {
+        return $this->hasMany(Measure::class);
+    }
+
+    public function TotalMeasureAmount(): float
+    {
+        return $this->measures()->sum('amount');
+    }
+
+    public function TotalMeasurePaidAmount(): float
+    {
+        return $this->measures()->where('is_paid', true)->sum('amount');
+    }
+
+    public function TotalMeasureUnpaidAmount(): float
+    {
+        return $this->measures()->where('is_paid', false)->sum('amount');
+    }
+
+    public function TotalMeasurePaidPercentage(): float
+    {
+        return $this->TotalMeasurePaidAmount() / $this->TotalMeasureAmount() * 100;
+    }
+
+    public function AproxRoiAmountPerMeasure(): float
+    {
+        return $this->balance * (
+            (($this->aprox_roi / 12) * 3) / 100
+        );
     }
 
     public function onModelSaving(): void
