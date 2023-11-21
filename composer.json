@@ -27,6 +27,7 @@
         "leandrocfe/filament-apex-charts": "^3.0",
         "mallardduck/blade-lucide-icons": "^1.11",
         "rinvex/countries": "^9.0",
+        "saade/filament-fullcalendar": "^3.0",
         "shipu/watchable": "dev-master",
         "spatie/laravel-medialibrary": "^10.0.0",
         "symfony/polyfill-intl-icu": "^1.27"
