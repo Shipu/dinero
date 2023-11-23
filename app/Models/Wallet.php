@@ -54,7 +54,6 @@ class Wallet extends BaseWallet implements HasMedia
         'aprox_roi' => 'decimal:2',
         'credit_limit' => 'decimal:2',
         'decimal_places' => 'integer',
-        'type' => WalletTypeEnum::class,
     ];
 
     public function scopeTenant(Builder $query): Builder
@@ -71,24 +70,28 @@ class Wallet extends BaseWallet implements HasMedia
         return $this->belongsTo(Account::class, 'account_id');
     }
 
-    public function measures(): HasMany
+    public function matures(): HasMany
     {
         return $this->hasMany(Mature::class);
     }
 
+    public function latestMature(){
+        return $this->matures()->latest()->first();
+    }
+
     public function TotalMatureAmount(): float
     {
-        return $this->measures()->sum('amount');
+        return $this->matures()->sum('amount');
     }
 
     public function TotalMaturePaidAmount(): float
     {
-        return $this->measures()->where('is_paid', true)->sum('amount');
+        return $this->matures()->where('is_paid', true)->sum('amount');
     }
 
     public function TotalMatureUnpaidAmount(): float
     {
-        return $this->measures()->where('is_paid', false)->sum('amount');
+        return $this->matures()->where('is_paid', false)->sum('amount');
     }
 
     public function TotalMaturePaidPercentage(): float
@@ -99,7 +102,7 @@ class Wallet extends BaseWallet implements HasMedia
     public function AproxRoiAmountPerMature(): float
     {
         return $this->balance * (
-            (($this->aprox_roi / 12) * 3) / 100
+            (($this->aprox_roi / 12) * $this->return_period_of_month) / 100
         );
     }
 

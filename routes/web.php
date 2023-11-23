@@ -1,6 +1,6 @@
 <?php
 
-use Filament\Facades\Filament;
+use App\Models\Wallet;
 use Illuminate\Support\Facades\Route;
 
 /*

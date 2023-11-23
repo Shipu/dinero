@@ -45,6 +45,10 @@ class Mature extends Model
         return $this->wallet()->mtdr();
     }
 
+    public function scopeUpcoming($scope){
+        return $scope->where('mature_date', '>=', now()->format('Y-m-d'));
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id');

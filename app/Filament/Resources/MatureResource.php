@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use Filament\Forms;
 use Filament\Tables;
 use App\Models\Mature;
+use App\Models\Wallet;
 use Filament\Forms\Form;
 use Filament\Tables\Table;
 use Filament\Resources\Resource;
@@ -92,6 +93,7 @@ class MatureResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -113,6 +115,7 @@ class MatureResource extends Resource
             'index' => Pages\ListMatures::route('/'),
             'create' => Pages\CreateMature::route('/create'),
             'edit' => Pages\EditMature::route('/{record}/edit'),
+            'view' => Pages\ViewMature::route('/{record}'),
         ];
     }
 }

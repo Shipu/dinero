@@ -2,10 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\MatureResource;
 use App\Models\Mature;
-use Saade\FilamentFullCalendar\Actions;
-use App\Filament\Resources\WalletResource;
-use Saade\FilamentFullCalendar\Data\EventData;
 use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
  
 class CalendarWidget extends FullCalendarWidget
@@ -27,13 +25,9 @@ class CalendarWidget extends FullCalendarWidget
                     'start' => $mature->mature_date?->format('Y-m-d'),
                     'end' => $mature->mature_date?->addDay(2)?->format('Y-m-d'),
                     'color' => $mature->is_paid ? 'black' : 'green',
+                    'url' => MatureResource::getUrl(name: 'edit', parameters: ['record' => $mature]),
                 ],
             )
             ->toArray();
     }
-
-
-
- 
-
 }
