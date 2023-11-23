@@ -11,13 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('measures', function (Blueprint $table) {
+        Schema::create('matures', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
             $table->foreignId('wallet_id')->constrained()->cascadeOnDelete();
-            $table->date('measure_date');
+            $table->date('mature_date');
+            $table->decimal('expected_amount', 64, 0)->default(0);
             $table->boolean('is_paid')->default(false);
-            $table->decimal('amount', 64, 0)->default(0);
+            $table->decimal('actual_amount', 64, 0)->default(0);
+            $table->foreignIdFor(\App\Models\Account::class)->constrained(
+                    (new \App\Models\Account())->getTable()
+                )->cascadeOnDelete();
             $table->timestamps();
         });
     }
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('measures');
+        Schema::dropIfExists('matures');
     }
 };

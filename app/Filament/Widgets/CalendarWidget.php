@@ -2,8 +2,11 @@
 
 namespace App\Filament\Widgets;
 
-use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
+use App\Models\Mature;
 use Saade\FilamentFullCalendar\Actions;
+use App\Filament\Resources\WalletResource;
+use Saade\FilamentFullCalendar\Data\EventData;
+use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
  
 class CalendarWidget extends FullCalendarWidget
 {
@@ -13,13 +16,23 @@ class CalendarWidget extends FullCalendarWidget
      */
     public function fetchEvents(array $fetchInfo): array
     {
-        // You can use $fetchInfo to filter events by date.
-        // This method should return an array of event-like objects. See: https://github.com/saade/filament-fullcalendar/blob/3.x/#returning-events
-        // You can also return an array of EventData objects. See: https://github.com/saade/filament-fullcalendar/blob/3.x/#the-eventdata-class
-        return [];
+        return Mature::query()
+            ->where('mature_date', '>=', $fetchInfo['start'])
+            ->where('mature_date', '<=', $fetchInfo['end'])
+            ->get()
+            ->map(
+                fn (Mature $mature) => [
+                    'id' => $mature->id,
+                    'title' => $mature->expected_amount . ' '. $mature->wallet->name,
+                    'start' => $mature->mature_date?->format('Y-m-d'),
+                    'end' => $mature->mature_date?->addDay(2)?->format('Y-m-d'),
+                    'color' => $mature->is_paid ? 'black' : 'green',
+                ],
+            )
+            ->toArray();
     }
 
- 
+
     public function getFormSchema(): array
     {
         return [

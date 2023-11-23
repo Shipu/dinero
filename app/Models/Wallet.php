@@ -48,9 +48,22 @@ class Wallet extends BaseWallet implements HasMedia
         'updated_at',
     ];
 
+    protected $casts = [
+        'meta' => 'array',
+        'balance' => 'decimal:2',
+        'aprox_roi' => 'decimal:2',
+        'credit_limit' => 'decimal:2',
+        'decimal_places' => 'integer',
+        'type' => WalletTypeEnum::class,
+    ];
+
     public function scopeTenant(Builder $query): Builder
     {
         return $query->where('account_id', optional(Filament::getTenant())->id);
+    }
+
+    public function scopeMTDR($scope){
+        return $scope->where('type', WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT);
     }
 
     public function owner(): BelongsTo
@@ -60,30 +73,30 @@ class Wallet extends BaseWallet implements HasMedia
 
     public function measures(): HasMany
     {
-        return $this->hasMany(Measure::class);
+        return $this->hasMany(Mature::class);
     }
 
-    public function TotalMeasureAmount(): float
+    public function TotalMatureAmount(): float
     {
         return $this->measures()->sum('amount');
     }
 
-    public function TotalMeasurePaidAmount(): float
+    public function TotalMaturePaidAmount(): float
     {
         return $this->measures()->where('is_paid', true)->sum('amount');
     }
 
-    public function TotalMeasureUnpaidAmount(): float
+    public function TotalMatureUnpaidAmount(): float
     {
         return $this->measures()->where('is_paid', false)->sum('amount');
     }
 
-    public function TotalMeasurePaidPercentage(): float
+    public function TotalMaturePaidPercentage(): float
     {
-        return $this->TotalMeasurePaidAmount() / $this->TotalMeasureAmount() * 100;
+        return $this->TotalMaturePaidAmount() / $this->TotalMatureAmount() * 100;
     }
 
-    public function AproxRoiAmountPerMeasure(): float
+    public function AproxRoiAmountPerMature(): float
     {
         return $this->balance * (
             (($this->aprox_roi / 12) * 3) / 100

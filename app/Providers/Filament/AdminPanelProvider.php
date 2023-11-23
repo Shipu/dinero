@@ -70,16 +70,7 @@ class AdminPanelProvider extends PanelProvider
                     ->myProfile(hasAvatars: true)
                     ->enableTwoFactorAuthentication(),
 
-                FilamentFullCalendarPlugin::make()
-                    ->selectable()
-                    ->editable()
-                    ->config([
-                        'headerToolbar' => [
-                            'start' => 'prev,next today',
-                            'center' => 'title',
-                            'end' => 'dayGridMonth,timeGridWeek,timeGridDay',
-                        ],
-                    ]),
+                FilamentFullCalendarPlugin::make(),
             ])
             ->tenant(model: Account::class, slugAttribute: 'id', ownershipRelationship: 'owner')
             ->tenantRegistration(RegisterAccount::class)
