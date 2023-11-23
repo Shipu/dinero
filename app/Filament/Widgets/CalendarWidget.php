@@ -33,27 +33,7 @@ class CalendarWidget extends FullCalendarWidget
     }
 
 
-    public function getFormSchema(): array
-    {
-        return [
 
-        ];
-    }
-
-    protected function headerActions(): array
-    {
-        return [
-            Actions\CreateAction::make(),
-        ];
-    }
- 
-    protected function modalActions(): array
-    {
-        return [
-            Actions\EditAction::make(),
-            Actions\DeleteAction::make(),
-        ];
-    }
  
 
 }
