@@ -12,6 +12,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        if(config('app.demo')) {
+            $schedule->command('migrate:fresh --seed')->everyFifteenMinutes();
+        }
         $schedule->command('queue:work --stop-when-empty')->hourly()->withoutOverlapping();
         $schedule->command('mature:generate')->hourly()->withoutOverlapping();
     }
