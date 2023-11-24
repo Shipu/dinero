@@ -10,6 +10,7 @@ Dinero is a multi account money tracker. It is a simple application that allows 
 - Goals
 - Debts
 - Transactions
+- MTDR Matures
 - Reports
 
 ## Installation
@@ -30,7 +31,10 @@ git checkout native-php
 Url: [http://dinero.bridgex.live](http://dinero.bridgex.live)
 
 ## Screenshots
+![Dashboard](https://github.com/aisuvro/app-finance/assets/2842856/74744f57-6b09-4f37-82c4-7bebfb69ea09)
+![Dashboard](https://github.com/aisuvro/app-finance/assets/2842856/40bb2150-5563-4d68-b29d-335b270ed467)
 ![Dashboard](screenshots/dinero-dashboard.png)
+![Mature](https://github.com/aisuvro/app-finance/assets/2842856/e026fadb-0643-4708-96d4-dcea4db73e0f)
 ![Wallets](screenshots/dinero-wallets.png)
 ![Categories](screenshots/dinero-categories.png)
 ![Budgets](screenshots/dinero-budgets.png)
