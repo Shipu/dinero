@@ -40,6 +40,13 @@ function curency_money_format(float $amount, string $currency): string
     return $currency. ' ' .number_format($amount, 2);
 }
 
+
+function plain_money_format(float $amount): string
+{
+    
+    return number_format($amount, 0);
+}
+
 function wallet_latest_mature_date(Wallet $wallet): Carbon{
     return Carbon::parse($wallet->latestMature()?->mature_date ? $wallet->latestMature()?->mature_date : $wallet->start_date);
 }

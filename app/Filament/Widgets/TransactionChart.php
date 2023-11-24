@@ -8,6 +8,7 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class TransactionChart extends ApexChartWidget
 {
+    protected int | string | array $columnSpan = 2;
     /**
      * Chart Id
      *
@@ -17,7 +18,7 @@ class TransactionChart extends ApexChartWidget
 
     protected static ?int $contentHeight = 300;
 
-    protected static ?int $sort = 1;
+    protected static ?int $sort = 4;
 
     /**
      * Widget Title

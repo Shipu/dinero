@@ -8,6 +8,9 @@ use Saade\FilamentFullCalendar\Widgets\FullCalendarWidget;
  
 class CalendarWidget extends FullCalendarWidget
 {
+    protected int | string | array $columnSpan = 4;
+    protected static ?int $sort = 2;
+
     /**
      * FullCalendar will call this function whenever it needs new event data.
      * This is triggered when the user clicks prev/next or switches views on the calendar.

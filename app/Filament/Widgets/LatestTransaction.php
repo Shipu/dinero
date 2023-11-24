@@ -13,7 +13,7 @@ class LatestTransaction extends TableWidget
 {
     protected int | string | array $columnSpan = 'full';
 
-    protected static ?int $sort = 3;
+    protected static ?int $sort = 4;
 
     public function table(Table $table): Table
     {
