@@ -27,14 +27,26 @@ class ListWallets extends ListRecords
             'all' => Tab::make()
                 ->icon('lucide-wallet')
                 ->badge(Wallet::tenant()->count()),
-            WalletTypeEnum::GENERAL->value => Tab::make()
-                ->icon('badge-dollar-sign')
-                ->badge(Wallet::tenant()->where('type', WalletTypeEnum::GENERAL->value)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->tenant()->where('type', WalletTypeEnum::GENERAL->value)),
-            WalletTypeEnum::CREDIT_CARD->value => Tab::make()
-                ->icon('lucide-credit-card')
-                ->badge(Wallet::tenant()->where('type', WalletTypeEnum::CREDIT_CARD->value)->count())
-                ->modifyQueryUsing(fn (Builder $query) => $query->tenant()->where('type', WalletTypeEnum::CREDIT_CARD->value)),
+            WalletTypeEnum::MOBILE_BANKING_ACCOUNT->value => Tab::make()
+                ->icon('lucide-phone')
+                ->badge(Wallet::tenant()->where('type', WalletTypeEnum::MOBILE_BANKING_ACCOUNT->value)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->tenant()->where('type', WalletTypeEnum::MOBILE_BANKING_ACCOUNT->value)),
+            WalletTypeEnum::DIGITAL_WALLET->value => Tab::make()
+                ->icon('lucide-wallet')
+                ->badge(Wallet::tenant()->where('type', WalletTypeEnum::DIGITAL_WALLET->value)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->tenant()->where('type', WalletTypeEnum::DIGITAL_WALLET->value)),
+            WalletTypeEnum::FREELANCER_ACCOUNT->value => Tab::make()
+                ->icon('lucide-briefcase')
+                ->badge(Wallet::tenant()->where('type', WalletTypeEnum::FREELANCER_ACCOUNT->value)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->tenant()->where('type', WalletTypeEnum::FREELANCER_ACCOUNT->value)),
+            WalletTypeEnum::SAVING_ACCOUNT->value => Tab::make()
+                ->icon('lucide-piggy-bank')
+                ->badge(Wallet::tenant()->where('type', WalletTypeEnum::SAVING_ACCOUNT->value)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->tenant()->where('type', WalletTypeEnum::SAVING_ACCOUNT->value)),
+            WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value => Tab::make()
+                ->icon('lucide-home')
+                ->badge(Wallet::tenant()->where('type', WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value)->count())
+                ->modifyQueryUsing(fn (Builder $query) => $query->tenant()->where('type', WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT->value)),
         ];
     }
 }

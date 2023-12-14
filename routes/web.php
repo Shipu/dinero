@@ -1,7 +1,9 @@
 <?php
 
-use Filament\Facades\Filament;
+use App\Models\Wallet;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Artisan;
+use Filament\Http\Middleware\IdentifyTenant;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,3 +15,10 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('schedule-run', function(){
+    Artisan::call('schedule:run');
+})
+->withoutMiddleware([
+    IdentifyTenant::class,
+]);

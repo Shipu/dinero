@@ -2,18 +2,24 @@
 
 namespace App\Models;
 
+use App\Models\Account;
 use App\Enums\WalletTypeEnum;
-use Bavix\Wallet\Models\Wallet as BaseWallet;
 use Filament\Facades\Filament;
+use Spatie\Image\Manipulations;
+use Spatie\MediaLibrary\HasMedia;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Shipu\Watchable\Traits\WatchableTrait;
+use Spatie\MediaLibrary\InteractsWithMedia;
+use Bavix\Wallet\Models\Wallet as BaseWallet;
+use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
-class Wallet extends BaseWallet
+class Wallet extends BaseWallet implements HasMedia
 {
-    use HasFactory, WatchableTrait, SoftDeletes;
+    use HasFactory, WatchableTrait, SoftDeletes, InteractsWithMedia;
 
     protected $fillable = [
         'holder_type',
@@ -30,6 +36,9 @@ class Wallet extends BaseWallet
         'icon',
         'color',
         'exclude',
+        'start_date',
+        'return_period_of_month',
+        'aprox_roi',
         'statement_day_of_month',
         'payment_due_day_of_month',
         'credit_limit',
@@ -39,14 +48,62 @@ class Wallet extends BaseWallet
         'updated_at',
     ];
 
+    protected $casts = [
+        'meta' => 'array',
+        'balance' => 'decimal:2',
+        'aprox_roi' => 'decimal:2',
+        'credit_limit' => 'decimal:2',
+        'decimal_places' => 'integer',
+    ];
+
     public function scopeTenant(Builder $query): Builder
     {
         return $query->where('account_id', optional(Filament::getTenant())->id);
     }
 
+    public function scopeMTDR($scope){
+        return $scope->where('type', WalletTypeEnum::MUDARABA_SCHEME_ACCOUNT);
+    }
+
     public function owner(): BelongsTo
     {
         return $this->belongsTo(Account::class, 'account_id');
+    }
+
+    public function matures(): HasMany
+    {
+        return $this->hasMany(Mature::class);
+    }
+
+    public function latestMature(){
+        return $this->matures()->latest()->first();
+    }
+
+    public function TotalMatureAmount(): float
+    {
+        return $this->matures()->sum('amount');
+    }
+
+    public function TotalMaturePaidAmount(): float
+    {
+        return $this->matures()->where('is_paid', true)->sum('amount');
+    }
+
+    public function TotalMatureUnpaidAmount(): float
+    {
+        return $this->matures()->where('is_paid', false)->sum('amount');
+    }
+
+    public function TotalMaturePaidPercentage(): float
+    {
+        return $this->TotalMaturePaidAmount() / $this->TotalMatureAmount() * 100;
+    }
+
+    public function AproxRoiAmountPerMature(): float
+    {
+        return $this->balance * (
+            (($this->aprox_roi / 12) * $this->return_period_of_month) / 100
+        );
     }
 
     public function onModelSaving(): void
@@ -71,5 +128,13 @@ class Wallet extends BaseWallet
         } elseif($amount > 0) {
             $this->deposit($amount, ['description' => 'Initial balance']);
         }
+    }
+
+    public function registerMediaConversions(Media $media = null): void
+    {
+        $this
+            ->addMediaConversion('preview')
+            ->fit(Manipulations::FIT_CROP, 300, 300)
+            ->nonQueued();
     }
 }

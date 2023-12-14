@@ -75,4 +75,9 @@ class Account extends Model implements HasCurrentTenantLabel
     {
         return $this->hasMany(Debt::class);
     }
+
+    public function matures(): HasMany
+    {
+        return $this->hasMany(Mature::class);
+    }
 }

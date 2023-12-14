@@ -9,6 +9,7 @@ use Leandrocfe\FilamentApexCharts\Widgets\ApexChartWidget;
 
 class CategoryChart extends ApexChartWidget
 {
+    protected int | string | array $columnSpan = 2;
     /**
      * Chart Id
      *
