@@ -77,8 +77,7 @@ class WalletResource extends Resource
                             ->visible(fn (Get $get, string $operation): bool => $get('type') != WalletTypeEnum::CREDIT_CARD->value && $operation == 'create'),
                         DatePicker::make('start_date')
                             ->label(__('wallets.fields.start_date'))
-                            ->displayFormat('Y-m-d')
-                            ->format('Y-m-d')
+                            ->displayFormat('d/m/Y')
                             ->required()
                             ->columnSpan([
                                 'sm' => 2,
@@ -214,6 +213,7 @@ class WalletResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('start_date')
                     ->label(__('wallets.fields.start_date'))
+                    ->date("d/m/Y")
                     ->sortable(),
                 Tables\Columns\TextColumn::make('return_period_of_month')
                     ->label(__('wallets.fields.return_period_of_month'))
@@ -252,14 +252,14 @@ class WalletResource extends Resource
                 Tables\Actions\CreateAction::make()->slideOver(),
             ]);
     }
-    
+
     public static function getRelations(): array
     {
         return [
             RelationManagers\TransactionsRelationManager::class,
         ];
     }
-    
+
     public static function getPages(): array
     {
         return [
