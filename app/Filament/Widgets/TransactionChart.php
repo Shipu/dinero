@@ -13,7 +13,7 @@ class TransactionChart extends ApexChartWidget
      *
      * @var string
      */
-    protected static string $chartId = 'transactionChart';
+    protected static ?string $chartId = 'transactionChart';
 
     protected static ?int $contentHeight = 300;
 
