@@ -14,7 +14,7 @@ class CategoryChart extends ApexChartWidget
      *
      * @var string
      */
-    protected static string $chartId = 'categoryChart';
+    protected static ?string $chartId = 'categoryChart';
 
     protected static ?int $sort = 2;
 
