@@ -6,7 +6,7 @@
 
 <br>
 
-<p align="center">:rocket: Multi Account Money Tracke :sparkles: <a href="https://github.com/Shipu/dinero">Dinero</a></p>
+<p align="center">:rocket: Multi Account Money Tracker :sparkles: <a href="https://github.com/Shipu/dinero">Dinero</a></p>
 
 <p align="center">
 	<img src="https://img.shields.io/badge/version project-1.0-brightgreen" alt="version project">
