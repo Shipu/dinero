@@ -35,11 +35,56 @@ Dinero is a multi account money tracker. It is a simple application that allows 
 
 ## Installation
 1. Clone the repository
-2. Run `composer install`
-3. Run `php artisan migrate --seed`
-4. Login with the following credentials:
-    - Email: `demo@dinero.app`
-    - Password: `12345678`
+
+```ssh 
+git clone https://github.com/Shipu/dinero.git
+```
+
+3. Switch to the repo folder
+
+```
+cd dinero
+```
+
+2. Install all the dependencies using composer
+
+```ssh 
+composer install
+```
+
+3. Copy the example env file and make the required configuration changes in the .env file
+
+```ssh 
+cp .env.example .env
+```
+
+4. Generate a new application key
+
+```ssh 
+php artisan key:generate
+```
+
+5. Run the database migrations with seeder (Set the database connection in .env before migrating)
+
+```ssh 
+php artisan migrate --seed
+```
+
+6. Run the application
+
+```ssh 
+php artisan serve
+```
+
+7. Browse the application
+
+> Url: [http://localhost:8000/](http://localhost:8000/)
+
+![img.png](img.png)
+
+8. Login with the following credentials:
+- Email: `demo@dinero.app`
+- Password: `12345678`
 
 ## NativePHP
 for the NativePHP version, please check the [nativephp branch](https://github.com/shipu/dinero/tree/native-php)
